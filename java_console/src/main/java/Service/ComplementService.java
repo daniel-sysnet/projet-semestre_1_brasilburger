@@ -26,4 +26,8 @@ public class ComplementService {
     public List<Complement> listerComplements() {
         return complementRepository.findAll();
     }
+
+    public Complement trouverComplementParId(int id) {
+        return complementRepository.findById(id);
+    }
 }
