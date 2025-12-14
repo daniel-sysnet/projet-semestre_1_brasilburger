@@ -26,4 +26,8 @@ public class MenuService {
     public List<Menu> listerMenus() {
         return menuRepository.findAll();
     }
+
+    public Menu trouverMenuParId(int id) {
+        return menuRepository.findById(id);
+    }
 }
