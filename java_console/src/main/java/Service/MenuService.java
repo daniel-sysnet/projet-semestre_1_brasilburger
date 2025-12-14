@@ -22,4 +22,8 @@ public class MenuService {
     public void archiverMenu(int id) {
         menuRepository.archive(id);
     }
+
+    public List<Menu> listerMenus() {
+        return menuRepository.findAll();
+    }
 }
