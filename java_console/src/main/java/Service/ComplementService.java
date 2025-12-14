@@ -18,4 +18,8 @@ public class ComplementService {
     public void modifierComplement(Complement complement) {
         complementRepository.update(complement);
     }
+
+    public void archiverComplement(int id) {
+        complementRepository.archive(id);
+    }
 }
