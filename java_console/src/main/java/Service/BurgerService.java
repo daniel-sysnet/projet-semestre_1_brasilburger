@@ -15,4 +15,7 @@ public class BurgerService {
         burgerRepository.save(burger);
     }
 
+    public void modifierBurger(Burger burger) {
+        burgerRepository.update(burger);
+    }
 }
