@@ -22,4 +22,8 @@ public class ComplementService {
     public void archiverComplement(int id) {
         complementRepository.archive(id);
     }
+
+    public List<Complement> listerComplements() {
+        return complementRepository.findAll();
+    }
 }
