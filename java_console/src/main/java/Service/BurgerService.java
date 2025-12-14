@@ -22,4 +22,8 @@ public class BurgerService {
     public void archiverBurger(int id) {
         burgerRepository.archive(id);
     }
+
+    public List<Burger> listerBurgers() {
+        return burgerRepository.findAll();
+    }
 }
