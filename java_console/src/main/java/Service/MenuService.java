@@ -15,5 +15,7 @@ public class MenuService {
         menuRepository.save(menu);
     }
 
-
+    public void modifierMenu(Menu menu) {
+        menuRepository.update(menu);
+    }
 }
