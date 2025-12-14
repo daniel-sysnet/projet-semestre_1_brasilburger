@@ -18,4 +18,8 @@ public class BurgerService {
     public void modifierBurger(Burger burger) {
         burgerRepository.update(burger);
     }
+
+    public void archiverBurger(int id) {
+        burgerRepository.archive(id);
+    }
 }
