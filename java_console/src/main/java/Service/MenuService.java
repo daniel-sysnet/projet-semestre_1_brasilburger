@@ -18,4 +18,8 @@ public class MenuService {
     public void modifierMenu(Menu menu) {
         menuRepository.update(menu);
     }
+
+    public void archiverMenu(int id) {
+        menuRepository.archive(id);
+    }
 }
