@@ -14,4 +14,8 @@ public class ComplementService {
     public void ajouterComplement(Complement complement) {
         complementRepository.save(complement);
     }
+
+    public void modifierComplement(Complement complement) {
+        complementRepository.update(complement);
+    }
 }
