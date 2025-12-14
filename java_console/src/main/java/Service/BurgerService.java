@@ -26,4 +26,8 @@ public class BurgerService {
     public List<Burger> listerBurgers() {
         return burgerRepository.findAll();
     }
+
+    public Burger trouverBurgerParId(int id) {
+        return burgerRepository.findById(id);
+    }
 }
