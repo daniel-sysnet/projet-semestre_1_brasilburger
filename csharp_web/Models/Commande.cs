@@ -6,6 +6,7 @@ namespace csharp_web.Models
     public enum EtatCommande
     {
         EnCours,
+        Validee,
         Terminee,
         Annulee
     }

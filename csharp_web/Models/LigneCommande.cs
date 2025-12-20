@@ -32,5 +32,18 @@ namespace csharp_web.Models
         [Required]
         [Range(1, int.MaxValue)]
         public int Quantite { get; set; }
+
+        // Propriété calculée pour le prix unitaire (non persistée)
+        [NotMapped]
+        public decimal PrixUnitaire
+        {
+            get
+            {
+                if (Burger != null) return Burger.Prix;
+                if (Menu != null) return Menu.Prix;
+                if (Complement != null) return Complement.Prix;
+                return 0;
+            }
+        }
     }
 }
