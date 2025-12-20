@@ -222,88 +222,52 @@
 
     <script>
         function annulerCommande(commandeId) {
-            if (confirm('Êtes-vous sûr de vouloir annuler cette commande ?')) {
-                fetch('/Commande/AnnulerCommande', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({
-                        commandeId: commandeId
-                    })
+            fetch('/Commande/AnnulerCommande', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    commandeId: commandeId
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        location.reload();
-                    } else {
-                        alert('Erreur : ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Une erreur est survenue');
-                });
-            }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    console.error('Erreur : ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         }
 
         function payerCommande(commandeId) {
-            var methode = prompt('Choisissez la méthode de paiement :\n1. Wave\n2. Orange Money\nEntrez 1 ou 2 :');
-            var methodePaiement;
-            if (methode == '1') {
-                methodePaiement = 'Wave';
-            } else if (methode == '2') {
-                methodePaiement = 'OM';
-            } else {
-                alert('Méthode invalide');
-                return;
-            }
+            var methodePaiement = 'Wave'; // Par défaut Wave
 
-            if (confirm('Confirmer le paiement de ' + (methodePaiement == 'OM' ? 'Orange Money' : methodePaiement) + ' ?')) {
-                fetch('/Commande/PayerCommande', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({
-                        commandeId: commandeId,
-                        methodePaiement: methodePaiement
-                    })
+            fetch('/Commande/PayerCommande', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    commandeId: commandeId,
+                    methodePaiement: methodePaiement
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        location.reload();
-                    } else {
-                        alert('Erreur : ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Une erreur est survenue');
-                });
-            }
-        }
-
-        // Afficher les messages de succès/erreur
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <text>
-        window.onload = function() {
-            alert('@TempData["SuccessMessage"]');
-        };
-            </text>
-        }
-
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <text>
-        window.onload = function() {
-            alert('@TempData["ErrorMessage"]');
-        };
-            </text>
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    console.error('Erreur : ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         }
     </script>
 </body>
