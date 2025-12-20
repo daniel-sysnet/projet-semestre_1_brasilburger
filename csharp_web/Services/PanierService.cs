@@ -17,6 +17,8 @@ namespace csharp_web.Services
         string GetModeConsommation();
         void SetMethodePaiement(MethodePaiement methode);
         MethodePaiement GetMethodePaiement();
+        void SetZoneLivraison(int zoneId);
+        int? GetZoneLivraison();
     }
 
     public class PanierService : IPanierService
@@ -25,6 +27,7 @@ namespace csharp_web.Services
         private const string CartSessionKey = "CartItems";
         private const string ModeSessionKey = "ModeConsommation";
         private const string PaiementSessionKey = "MethodePaiement";
+        private const string ZoneSessionKey = "ZoneLivraison";
 
         public PanierService(IHttpContextAccessor httpContextAccessor)
         {
@@ -138,6 +141,21 @@ namespace csharp_web.Services
             var session = _httpContextAccessor.HttpContext?.Session;
             var methodeStr = session?.GetString(PaiementSessionKey);
             return Enum.TryParse<MethodePaiement>(methodeStr, out var methode) ? methode : MethodePaiement.Wave;
+        }
+
+        public void SetZoneLivraison(int zoneId)
+        {
+            var session = _httpContextAccessor.HttpContext?.Session;
+            if (session != null)
+            {
+                session.SetInt32(ZoneSessionKey, zoneId);
+            }
+        }
+
+        public int? GetZoneLivraison()
+        {
+            var session = _httpContextAccessor.HttpContext?.Session;
+            return session?.GetInt32(ZoneSessionKey);
         }
 
         private void SaveCart(List<PanierItem> cart)
