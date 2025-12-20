@@ -1,0 +1,6 @@
+.dockerignore
+Dockerfile
+.gitignore
+README.md
+csharp_web.sln
+csharp_web/
