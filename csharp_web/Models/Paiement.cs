@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace csharp_web.Models
 {
@@ -14,7 +15,13 @@ namespace csharp_web.Models
         public int Id { get; set; }
 
         [Required]
-        public DateTime Date { get; set; }
+        public int CommandeId { get; set; }
+
+        [ForeignKey("CommandeId")]
+        public Commande? Commande { get; set; }
+
+        [Required]
+        public DateTime DatePaiement { get; set; }
 
         [Required]
         public decimal Montant { get; set; }
