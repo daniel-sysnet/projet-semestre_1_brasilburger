@@ -2,6 +2,41 @@
     ViewData["Title"] = "Mes Commandes";
     var clientId = Context.Session.GetInt32("ClientId");
     var commandesAvecDetails = ViewBag.CommandesAvecDetails as IEnumerable<dynamic>;
+
+    string GetStatusClass(csharp_web.Models.EtatCommande etat)
+    {
+        return etat switch
+        {
+            csharp_web.Models.EtatCommande.EnCours => "in-progress",
+            csharp_web.Models.EtatCommande.Validee => "validated",
+            csharp_web.Models.EtatCommande.Terminee => "completed",
+            csharp_web.Models.EtatCommande.Annulee => "cancelled",
+            _ => "in-progress"
+        };
+    }
+
+    string GetStatusText(csharp_web.Models.EtatCommande etat)
+    {
+        return etat switch
+        {
+            csharp_web.Models.EtatCommande.EnCours => "En cours",
+            csharp_web.Models.EtatCommande.Validee => "Validée",
+            csharp_web.Models.EtatCommande.Terminee => "Terminée",
+            csharp_web.Models.EtatCommande.Annulee => "Annulée",
+            _ => "En cours"
+        };
+    }
+
+    string GetTypeText(csharp_web.Models.TypeCommande type)
+    {
+        return type switch
+        {
+            csharp_web.Models.TypeCommande.SurPlace => "Sur place",
+            csharp_web.Models.TypeCommande.AEmporter => "À emporter",
+            csharp_web.Models.TypeCommande.Livraison => "Livraison",
+            _ => "Sur place"
+        };
+    }
 }
 
 <!DOCTYPE html>
@@ -59,6 +94,7 @@
                                         <div class="order-info">
                                             <h3 class="order-number">Commande #@commande.Id</h3>
                                             <p class="order-date">@commande.Date.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</p>
+                                            <p class="order-type">@GetTypeText(commande.Type) @if (commande.Type == csharp_web.Models.TypeCommande.Livraison && commande.Zone != null) { <span>- @commande.Zone.Nom</span> }</p>
                                         </div>
                                         <div class="status-container">
                                             <span class="order-status status-@GetStatusClass(commande.Etat)">@GetStatusText(commande.Etat)</span>
@@ -70,6 +106,16 @@
                                                         <line x1="6" y1="6" x2="18" y2="18"/>
                                                     </svg>
                                                     Annuler
+                                                </button>
+                                            }
+                                            @if (commande.Etat == csharp_web.Models.EtatCommande.Validee)
+                                            {
+                                                <button class="pay-btn" onclick="payerCommande(@commande.Id)">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                                        <line x1="1" y1="10" x2="23" y2="10"/>
+                                                    </svg>
+                                                    Payer
                                                 </button>
                                             }
                                         </div>
@@ -122,7 +168,7 @@
                                                             <span class="item-quantity">Quantité: @ligne.Quantite</span>
                                                         </div>
                                                     </div>
-                                                    <span class="item-price">@(prixUnitaire * ligne.Quantite).ToString("N0") FCFA</span>
+                                                    <span class="item-price">@((int)(prixUnitaire * ligne.Quantite))</span>
                                                 </div>
                                             }
                                         </div>
@@ -130,7 +176,7 @@
 
                                     <div class="order-footer">
                                         <span class="total-label">Total</span>
-                                        <span class="total-amount">@total?.ToString("N0") FCFA</span>
+                                        <span class="total-amount">@((int)total)</span>
                                     </div>
                                 </div>
                             }
@@ -189,6 +235,46 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert('Erreur : ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Une erreur est survenue');
+                });
+            }
+        }
+
+        function payerCommande(commandeId) {
+            var methode = prompt('Choisissez la méthode de paiement :\n1. Wave\n2. Orange Money\nEntrez 1 ou 2 :');
+            var methodePaiement;
+            if (methode == '1') {
+                methodePaiement = 'Wave';
+            } else if (methode == '2') {
+                methodePaiement = 'OM';
+            } else {
+                alert('Méthode invalide');
+                return;
+            }
+
+            if (confirm('Confirmer le paiement de ' + (methodePaiement == 'OM' ? 'Orange Money' : methodePaiement) + ' ?')) {
+                fetch('/Commande/PayerCommande', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        commandeId: commandeId,
+                        methodePaiement: methodePaiement
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
                         location.reload();
                     } else {
                         alert('Erreur : ' + data.message);
@@ -222,29 +308,3 @@
     </script>
 </body>
 </html>
-
-@{
-    string GetStatusClass(csharp_web.Models.EtatCommande etat)
-    {
-        return etat switch
-        {
-            csharp_web.Models.EtatCommande.EnCours => "in-progress",
-            csharp_web.Models.EtatCommande.Validee => "validated",
-            csharp_web.Models.EtatCommande.Terminee => "completed",
-            csharp_web.Models.EtatCommande.Annulee => "cancelled",
-            _ => "in-progress"
-        };
-    }
-
-    string GetStatusText(csharp_web.Models.EtatCommande etat)
-    {
-        return etat switch
-        {
-            csharp_web.Models.EtatCommande.EnCours => "En cours",
-            csharp_web.Models.EtatCommande.Validee => "Validée",
-            csharp_web.Models.EtatCommande.Terminee => "Terminée",
-            csharp_web.Models.EtatCommande.Annulee => "Annulée",
-            _ => "En cours"
-        };
-    }
-}
