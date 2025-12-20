@@ -35,6 +35,7 @@ namespace csharp_web.Controllers
                 HttpContext.Session.SetInt32("ClientId", client.Id);
                 HttpContext.Session.SetString("ClientNom", client.Nom);
                 HttpContext.Session.SetString("ClientPrenom", client.Prenom);
+                HttpContext.Session.SetString("ClientTelephone", client.Telephone);
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -66,14 +67,25 @@ namespace csharp_web.Controllers
             }
 
             await _clientService.RegisterAsync(nom, prenom, telephone);
-            ViewBag.Success = "Compte créé avec succès. Vous pouvez maintenant vous connecter.";
-            return View("Login");
+            TempData["SuccessMessage"] = "Compte créé avec succès. Vous pouvez maintenant vous connecter.";
+            return RedirectToAction("Login");
         }
 
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
+        }
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            var clientId = HttpContext.Session.GetInt32("ClientId");
+            if (!clientId.HasValue)
+            {
+                return RedirectToAction("Login");
+            }
+            return View();
         }
     }
 }

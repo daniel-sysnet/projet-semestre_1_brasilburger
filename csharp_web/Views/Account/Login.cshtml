@@ -23,6 +23,11 @@
                 <div style="color: red; text-align: center; margin-bottom: 10px;">@ViewBag.Error</div>
             }
 
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div style="color: green; text-align: center; margin-bottom: 10px;">@TempData["SuccessMessage"]</div>
+            }
+
             <form method="post" style="max-width: 400px; margin: 0 auto;">
                 <div style="margin-bottom: 15px;">
                     <label for="nom" style="display: block; margin-bottom: 5px;">Nom</label>
