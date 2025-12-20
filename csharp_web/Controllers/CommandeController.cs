@@ -60,7 +60,43 @@ namespace csharp_web.Controllers
             try
             {
                 await _commandeService.AnnulerCommandeAsync(commandeId, clientId.Value);
-                return Json(new { success = true });
+                TempData["SuccessMessage"] = "Commande annulée avec succès";
+                return Json(new { success = true, message = "Commande annulée avec succès" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PayerCommande(int commandeId, MethodePaiement methodePaiement)
+        {
+            var clientId = HttpContext.Session.GetInt32("ClientId");
+            if (!clientId.HasValue)
+            {
+                return Json(new { success = false, message = "Utilisateur non connecté" });
+            }
+
+            try
+            {
+                // Récupérer la commande
+                var commande = await _commandeService.GetCommandeByIdAsync(commandeId);
+                if (commande == null || commande.ClientId != clientId.Value)
+                {
+                    return Json(new { success = false, message = "Commande introuvable" });
+                }
+
+                if (commande.Etat != EtatCommande.Validee)
+                {
+                    return Json(new { success = false, message = "La commande doit être validée pour être payée" });
+                }
+
+                // Simuler le paiement (en production, intégrer Wave/Orange Money API)
+                // Ici, on marque simplement comme payé et change l'état à Terminee
+
+                await _commandeService.MarquerCommandePayeeAsync(commandeId, methodePaiement);
+                return Json(new { success = true, message = "Paiement effectué avec succès" });
             }
             catch (Exception ex)
             {
