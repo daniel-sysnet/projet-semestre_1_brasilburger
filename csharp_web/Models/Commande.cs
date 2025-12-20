@@ -25,7 +25,7 @@ namespace csharp_web.Models
         public int? ClientId { get; set; }
 
         [ForeignKey("ClientId")]
-        public Client Client { get; set; }
+        public Client? Client { get; set; }
 
         [Required]
         public EtatCommande Etat { get; set; } = EtatCommande.EnCours;
@@ -39,16 +39,16 @@ namespace csharp_web.Models
         public int? ZoneId { get; set; }
 
         [ForeignKey("ZoneId")]
-        public Zone Zone { get; set; }
+        public Zone? Zone { get; set; }
 
         public int? LivreurId { get; set; }
 
         [ForeignKey("LivreurId")]
-        public Livreur Livreur { get; set; }
+        public Livreur? Livreur { get; set; }
 
         public int? PaiementId { get; set; }
 
         [ForeignKey("PaiementId")]
-        public Paiement Paiement { get; set; }
+        public Paiement? Paiement { get; set; }
     }
 }
