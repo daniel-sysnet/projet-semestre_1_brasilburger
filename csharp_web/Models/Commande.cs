@@ -35,6 +35,9 @@ namespace csharp_web.Models
         public DateTime Date { get; set; }
 
         [Required]
+        public decimal Total { get; set; }
+
+        [Required]
         public TypeCommande Type { get; set; }
 
         public int? ZoneId { get; set; }
