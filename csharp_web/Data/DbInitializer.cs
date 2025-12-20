@@ -66,17 +66,19 @@ namespace csharp_web.Data
             };
             context.Gestionnaires.AddRange(gestionnaires);
 
+            context.SaveChanges(); // Sauvegarder les entités de base
+
             var paiements = new Paiement[]
             {
-                new Paiement { Date = new DateTime(2025, 12, 13), Montant = 8500.00m, Methode = MethodePaiement.Wave },
-                new Paiement { Date = new DateTime(2025, 12, 13), Montant = 10500.00m, Methode = MethodePaiement.OM }
+                new Paiement { DatePaiement = new DateTime(2025, 12, 13), Montant = 8500.00m, Methode = MethodePaiement.Wave },
+                new Paiement { DatePaiement = new DateTime(2025, 12, 13), Montant = 10500.00m, Methode = MethodePaiement.OM }
             };
             context.Paiements.AddRange(paiements);
 
             var commandes = new Commande[]
             {
-                new Commande { ClientId = 1, Etat = EtatCommande.Terminee, Date = new DateTime(2025, 12, 13), Type = TypeCommande.Livraison, ZoneId = 1, LivreurId = 1, PaiementId = 1 },
-                new Commande { ClientId = 2, Etat = EtatCommande.EnCours, Date = new DateTime(2025, 12, 13), Type = TypeCommande.SurPlace, PaiementId = 2 }
+                new Commande { ClientId = 1, Etat = EtatCommande.Terminee, Date = new DateTime(2025, 12, 13), Total = 8500.00m, Type = TypeCommande.Livraison, ZoneId = 1, LivreurId = 1, PaiementId = 1 },
+                new Commande { ClientId = 2, Etat = EtatCommande.EnCours, Date = new DateTime(2025, 12, 13), Total = 10500.00m, Type = TypeCommande.SurPlace, PaiementId = 2 }
             };
             context.Commandes.AddRange(commandes);
 
@@ -87,6 +89,16 @@ namespace csharp_web.Data
                 new LigneCommande { CommandeId = 1, MenuId = 1, ComplementId = 4, Quantite = 1 }
             };
             context.LigneCommandes.AddRange(ligneCommandes);
+
+            context.SaveChanges();
+
+            // Mettre à jour les paiements avec CommandeId
+            var paiement1 = context.Paiements.First(p => p.Id == 1);
+            paiement1.CommandeId = 1;
+            var paiement2 = context.Paiements.First(p => p.Id == 2);
+            paiement2.CommandeId = 2;
+
+            context.SaveChanges();
 
             context.SaveChanges();
         }
