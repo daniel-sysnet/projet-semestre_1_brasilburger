@@ -22,6 +22,9 @@ builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IPanierService, PanierService>();
 builder.Services.AddScoped<ICommandeRepository, CommandeRepository>();
 builder.Services.AddScoped<ICommandeService, CommandeService>();
+builder.Services.AddScoped<ILivreurRepository, LivreurRepository>();
+builder.Services.AddScoped<ILivreurService, LivreurService>();
+builder.Services.AddScoped<ILivreurService, LivreurService>();
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
