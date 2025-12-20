@@ -18,24 +18,36 @@ public class HomeController : Controller
         _panierService = panierService;
     }
 
-    public async Task<IActionResult> Index(string filter = "all")
+    public async Task<IActionResult> Index(string filter = "all", string search = "")
     {
         ViewBag.Filter = filter;
+        ViewBag.Search = search;
         ViewBag.CartItemCount = _panierService.GetCartItemCount();
+
+        IQueryable<Burger> burgersQuery = _context.Burgers;
+        IQueryable<Complement> complementsQuery = _context.Complements;
+        IQueryable<Menu> menusQuery = _context.Menus;
+
+        if (!string.IsNullOrEmpty(search))
+        {
+            burgersQuery = burgersQuery.Where(b => b.Nom.Contains(search) || b.Description.Contains(search));
+            complementsQuery = complementsQuery.Where(c => c.Nom.Contains(search) || c.Description.Contains(search));
+            menusQuery = menusQuery.Where(m => m.Nom.Contains(search) || m.Description.Contains(search));
+        }
 
         if (filter == "all" || filter == "burgers")
         {
-            ViewBag.Burgers = await _context.Burgers.ToListAsync();
+            ViewBag.Burgers = await burgersQuery.ToListAsync();
         }
 
         if (filter == "all" || filter == "complements")
         {
-            ViewBag.Complements = await _context.Complements.ToListAsync();
+            ViewBag.Complements = await complementsQuery.ToListAsync();
         }
 
         if (filter == "all" || filter == "menus")
         {
-            ViewBag.Menus = await _context.Menus.ToListAsync();
+            ViewBag.Menus = await menusQuery.ToListAsync();
         }
 
         return View();
