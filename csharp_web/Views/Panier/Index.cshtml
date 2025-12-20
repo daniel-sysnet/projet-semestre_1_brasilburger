@@ -126,23 +126,8 @@
                     </div>
                 </div>
 
-                <!-- Paiement -->
+                <!-- Total -->
                 <div class="section-card">
-                    <h3 class="section-title">Paiement</h3>
-                    <div class="payment-buttons">
-                        <form method="post" action="@Url.Action("SetMethodePaiement", "Panier")" style="display: inline;">
-                            <input type="hidden" name="methode" value="@MethodePaiement.Wave" />
-                            <button type="submit" class="payment-btn @(methodePaiement == MethodePaiement.Wave ? "active" : "")">
-                                <span class="payment-label">Wave</span>
-                            </button>
-                        </form>
-                        <form method="post" action="@Url.Action("SetMethodePaiement", "Panier")" style="display: inline;">
-                            <input type="hidden" name="methode" value="@MethodePaiement.OM" />
-                            <button type="submit" class="payment-btn @(methodePaiement == MethodePaiement.OM ? "active" : "")">
-                                <span class="payment-label">Orange Money</span>
-                            </button>
-                        </form>
-                    </div>
                     <div class="total-row">
                         <span class="total-label">Total :</span>
                         <span class="total-amount">@total.ToString("N0") FCFA</span>

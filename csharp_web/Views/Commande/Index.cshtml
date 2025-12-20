@@ -58,7 +58,7 @@
                                     <div class="order-header">
                                         <div class="order-info">
                                             <h3 class="order-number">Commande #@commande.Id</h3>
-                                            <p class="order-date">@commande.Date.ToString("dd/MM/yyyy HH:mm")</p>
+                                            <p class="order-date">@commande.Date.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</p>
                                         </div>
                                         <div class="status-container">
                                             <span class="order-status status-@GetStatusClass(commande.Etat)">@GetStatusText(commande.Etat)</span>
@@ -80,14 +80,49 @@
                                         <div class="order-items">
                                             @foreach (var ligne in lignes)
                                             {
-                                                var nomProduit = "";
-                                                if (ligne.Burger != null) nomProduit = ligne.Burger.Nom;
-                                                else if (ligne.Menu != null) nomProduit = ligne.Menu.Nom;
-                                                else if (ligne.Complement != null) nomProduit = ligne.Complement.Nom;
+                                                var nomProduit = "Produit inconnu";
+                                                var imageProduit = "";
+                                                var prixUnitaire = 0m;
+
+                                                if (ligne.Burger != null)
+                                                {
+                                                    nomProduit = ligne.Burger.Nom ?? "Burger";
+                                                    imageProduit = ligne.Burger.Image ?? "";
+                                                    prixUnitaire = ligne.Burger.Prix;
+                                                }
+                                                else if (ligne.Menu != null)
+                                                {
+                                                    nomProduit = ligne.Menu.Nom ?? "Menu";
+                                                    imageProduit = ligne.Menu.Image ?? "";
+                                                    prixUnitaire = ligne.Menu.Prix;
+                                                }
+                                                else if (ligne.Complement != null)
+                                                {
+                                                    nomProduit = ligne.Complement.Nom ?? "Complément";
+                                                    imageProduit = ligne.Complement.Image ?? "";
+                                                    prixUnitaire = ligne.Complement.Prix;
+                                                }
 
                                                 <div class="order-item">
-                                                    <span class="item-name">@nomProduit x@ligne.Quantite</span>
-                                                    <span class="item-price">@(ligne.PrixUnitaire * ligne.Quantite).ToString("N0") FCFA</span>
+                                                    <div class="item-info">
+                                                        @if (!string.IsNullOrEmpty(imageProduit))
+                                                        {
+                                                            <img src="@imageProduit" alt="@nomProduit" class="item-image" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="item-image-placeholder">
+                                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                    <path d="M9 2L7 6H2v14h20V6h-5l-2-4H9z"/>
+                                                                </svg>
+                                                            </div>
+                                                        }
+                                                        <div class="item-details">
+                                                            <span class="item-name">@nomProduit</span>
+                                                            <span class="item-quantity">Quantité: @ligne.Quantite</span>
+                                                        </div>
+                                                    </div>
+                                                    <span class="item-price">@(prixUnitaire * ligne.Quantite).ToString("N0") FCFA</span>
                                                 </div>
                                             }
                                         </div>
