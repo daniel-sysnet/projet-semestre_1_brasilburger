@@ -19,6 +19,11 @@ obj/
 .DS_Store
 Thumbs.db
 
+# Local databases
+*.db
+*.db-shm
+*.db-wal
+
 # NuGet
 *.nupkg
 *.snupkg

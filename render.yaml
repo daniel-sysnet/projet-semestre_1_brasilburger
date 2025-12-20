@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: brasil-burger-app
+    runtime: docker
+    buildCommand: docker build -t brasil-burger .
+    startCommand: docker run -p $PORT:10000 brasil-burger
+    envVars:
+      - key: DATABASE_URL
+        sync: false  # Set in Render dashboard
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
