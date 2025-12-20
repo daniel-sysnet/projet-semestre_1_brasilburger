@@ -123,26 +123,26 @@
 
         <!-- Navigation Bottom -->
         <nav class="bottom-nav">
-            <button class="nav-btn active">
+            <a href="@Url.Action("Index", "Home")" class="nav-btn active">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                     <polyline points="9 22 9 12 15 12 15 22"/>
                 </svg>
                 <span class="nav-label">Accueil</span>
-            </button>
-            <button class="nav-btn">
+            </a>
+            <a href="@Url.Action("Index", "Commande")" class="nav-btn">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
                 </svg>
                 <span class="nav-label">Commandes</span>
-            </button>
-            <button class="nav-btn">
+            </a>
+            <a href="@Url.Action("Index", "Account")" class="nav-btn">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                     <circle cx="12" cy="7" r="4"/>
                 </svg>
                 <span class="nav-label">Profil</span>
-            </button>
+            </a>
         </nav>
     </div>
 
