@@ -22,7 +22,79 @@ namespace csharp_web.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configurations supplémentaires si nécessaire
+            // Configurations pour correspondre aux noms de tables et colonnes du script SQL (minuscules)
+            modelBuilder.Entity<Burger>().ToTable("burger");
+            modelBuilder.Entity<Burger>().Property(b => b.Id).HasColumnName("id");
+            modelBuilder.Entity<Burger>().Property(b => b.Nom).HasColumnName("nom");
+            modelBuilder.Entity<Burger>().Property(b => b.Description).HasColumnName("description");
+            modelBuilder.Entity<Burger>().Property(b => b.Prix).HasColumnName("prix");
+            modelBuilder.Entity<Burger>().Property(b => b.Image).HasColumnName("image");
+
+            modelBuilder.Entity<Complement>().ToTable("complement");
+            modelBuilder.Entity<Complement>().Property(c => c.Id).HasColumnName("id");
+            modelBuilder.Entity<Complement>().Property(c => c.Nom).HasColumnName("nom");
+            modelBuilder.Entity<Complement>().Property(c => c.Description).HasColumnName("description");
+            modelBuilder.Entity<Complement>().Property(c => c.Prix).HasColumnName("prix");
+            modelBuilder.Entity<Complement>().Property(c => c.Image).HasColumnName("image");
+
+            modelBuilder.Entity<Menu>().ToTable("menu");
+            modelBuilder.Entity<Menu>().Property(m => m.Id).HasColumnName("id");
+            modelBuilder.Entity<Menu>().Property(m => m.Nom).HasColumnName("nom");
+            modelBuilder.Entity<Menu>().Property(m => m.Description).HasColumnName("description");
+            modelBuilder.Entity<Menu>().Property(m => m.Prix).HasColumnName("prix");
+            modelBuilder.Entity<Menu>().Property(m => m.Image).HasColumnName("image");
+
+            modelBuilder.Entity<Client>().ToTable("client");
+            modelBuilder.Entity<Client>().Property(c => c.Id).HasColumnName("id");
+            modelBuilder.Entity<Client>().Property(c => c.Nom).HasColumnName("nom");
+            modelBuilder.Entity<Client>().Property(c => c.Prenom).HasColumnName("prenom");
+            modelBuilder.Entity<Client>().Property(c => c.Telephone).HasColumnName("telephone");
+
+            modelBuilder.Entity<Zone>().ToTable("zone");
+            modelBuilder.Entity<Zone>().Property(z => z.Id).HasColumnName("id");
+            modelBuilder.Entity<Zone>().Property(z => z.Nom).HasColumnName("nom");
+            modelBuilder.Entity<Zone>().Property(z => z.Prix).HasColumnName("prix");
+
+            modelBuilder.Entity<Livreur>().ToTable("livreur");
+            modelBuilder.Entity<Livreur>().Property(l => l.Id).HasColumnName("id");
+            modelBuilder.Entity<Livreur>().Property(l => l.Nom).HasColumnName("nom");
+            modelBuilder.Entity<Livreur>().Property(l => l.Prenom).HasColumnName("prenom");
+            modelBuilder.Entity<Livreur>().Property(l => l.Telephone).HasColumnName("telephone");
+            modelBuilder.Entity<Livreur>().Property(l => l.ZoneId).HasColumnName("zone_id");
+
+            modelBuilder.Entity<Gestionnaire>().ToTable("gestionnaire");
+            modelBuilder.Entity<Gestionnaire>().Property(g => g.Id).HasColumnName("id");
+            modelBuilder.Entity<Gestionnaire>().Property(g => g.Nom).HasColumnName("nom");
+            modelBuilder.Entity<Gestionnaire>().Property(g => g.Prenom).HasColumnName("prenom");
+            modelBuilder.Entity<Gestionnaire>().Property(g => g.Telephone).HasColumnName("telephone");
+            modelBuilder.Entity<Gestionnaire>().Property(g => g.Login).HasColumnName("login");
+            modelBuilder.Entity<Gestionnaire>().Property(g => g.Password).HasColumnName("password");
+
+            modelBuilder.Entity<Paiement>().ToTable("paiement");
+            modelBuilder.Entity<Paiement>().Property(p => p.Id).HasColumnName("id");
+            modelBuilder.Entity<Paiement>().Property(p => p.Date).HasColumnName("date");
+            modelBuilder.Entity<Paiement>().Property(p => p.Montant).HasColumnName("montant");
+            modelBuilder.Entity<Paiement>().Property(p => p.Methode).HasColumnName("methode");
+
+            modelBuilder.Entity<Commande>().ToTable("commande");
+            modelBuilder.Entity<Commande>().Property(c => c.Id).HasColumnName("id");
+            modelBuilder.Entity<Commande>().Property(c => c.ClientId).HasColumnName("client_id");
+            modelBuilder.Entity<Commande>().Property(c => c.Etat).HasColumnName("etat");
+            modelBuilder.Entity<Commande>().Property(c => c.Date).HasColumnName("date");
+            modelBuilder.Entity<Commande>().Property(c => c.Type).HasColumnName("type");
+            modelBuilder.Entity<Commande>().Property(c => c.ZoneId).HasColumnName("zone_id");
+            modelBuilder.Entity<Commande>().Property(c => c.LivreurId).HasColumnName("livreur_id");
+            modelBuilder.Entity<Commande>().Property(c => c.PaiementId).HasColumnName("paiement_id");
+
+            modelBuilder.Entity<LigneCommande>().ToTable("lignecommande");
+            modelBuilder.Entity<LigneCommande>().Property(l => l.Id).HasColumnName("id");
+            modelBuilder.Entity<LigneCommande>().Property(l => l.CommandeId).HasColumnName("commande_id");
+            modelBuilder.Entity<LigneCommande>().Property(l => l.BurgerId).HasColumnName("burger_id");
+            modelBuilder.Entity<LigneCommande>().Property(l => l.MenuId).HasColumnName("menu_id");
+            modelBuilder.Entity<LigneCommande>().Property(l => l.ComplementId).HasColumnName("complement_id");
+            modelBuilder.Entity<LigneCommande>().Property(l => l.Quantite).HasColumnName("quantite");
+
+            // Conversions pour les enums
             modelBuilder.Entity<Commande>()
                 .Property(c => c.Etat)
                 .HasConversion<string>();
