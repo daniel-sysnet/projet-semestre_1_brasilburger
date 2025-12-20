@@ -18,6 +18,37 @@ namespace csharp_web.Data
         public DbSet<Commande> Commandes { get; set; }
         public DbSet<LigneCommande> LigneCommandes { get; set; }
 
+        // Dictionnaires pour les conversions d'enums
+        private static readonly Dictionary<EtatCommande, string> EtatToString = new()
+        {
+            { EtatCommande.EnCours, "En cours" },
+            { EtatCommande.Validee, "Validée" },
+            { EtatCommande.Terminee, "Terminée" },
+            { EtatCommande.Annulee, "Annulée" }
+        };
+
+        private static readonly Dictionary<string, EtatCommande> StringToEtat = new()
+        {
+            { "En cours", EtatCommande.EnCours },
+            { "Validée", EtatCommande.Validee },
+            { "Terminée", EtatCommande.Terminee },
+            { "Annulée", EtatCommande.Annulee }
+        };
+
+        private static readonly Dictionary<TypeCommande, string> TypeToString = new()
+        {
+            { TypeCommande.SurPlace, "Sur place" },
+            { TypeCommande.AEmporter, "A emporter" },
+            { TypeCommande.Livraison, "Livraison" }
+        };
+
+        private static readonly Dictionary<string, TypeCommande> StringToType = new()
+        {
+            { "Sur place", TypeCommande.SurPlace },
+            { "A emporter", TypeCommande.AEmporter },
+            { "Livraison", TypeCommande.Livraison }
+        };
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -97,11 +128,17 @@ namespace csharp_web.Data
             // Conversions pour les enums
             modelBuilder.Entity<Commande>()
                 .Property(c => c.Etat)
-                .HasConversion<string>();
+                .HasConversion(
+                    etat => EtatToString[etat],
+                    str => StringToEtat[str]
+                );
 
             modelBuilder.Entity<Commande>()
                 .Property(c => c.Type)
-                .HasConversion<string>();
+                .HasConversion(
+                    type => TypeToString[type],
+                    str => StringToType[str]
+                );
 
             modelBuilder.Entity<Paiement>()
                 .Property(p => p.Methode)
