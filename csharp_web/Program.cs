@@ -20,6 +20,8 @@ builder.Services.AddSession(options =>
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IPanierService, PanierService>();
+builder.Services.AddScoped<ICommandeRepository, CommandeRepository>();
+builder.Services.AddScoped<ICommandeService, CommandeService>();
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
