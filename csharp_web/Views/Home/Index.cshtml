@@ -27,13 +27,13 @@
                         <span class="title-blue">Burger</span>
                     </h1>
                 </div>
-                <button class="cart-button">
+                <a href="@Url.Action("Index", "Panier")" class="cart-button">
                     <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M9 2L7 6H2v14h20V6h-5l-2-4H9z"/>
                         <path d="M9 6v8m6-8v8"/>
                     </svg>
-                    <span class="cart-badge">0</span>
-                </button>
+                    <span class="cart-badge">@ViewBag.CartItemCount</span>
+                </a>
             </div>
         </header>
 
@@ -74,7 +74,7 @@
                                 <p class="product-description">@burger.Description</p>
                                 <div class="product-footer">
                                     <span class="product-price">@burger.Prix.ToString("N0") FCFA</span>
-                                    <button class="add-btn">Ajouter</button>
+                                    <button class="add-btn" onclick="addToCart('Burger', @burger.Id, '@burger.Nom.Replace("'", "\\'")', @burger.Prix, '@burger.Image')">Ajouter</button>
                                 </div>
                             </div>
                         </div>
@@ -92,7 +92,7 @@
                                 <p class="product-description">@complement.Description</p>
                                 <div class="product-footer">
                                     <span class="product-price">@complement.Prix.ToString("N0") FCFA</span>
-                                    <button class="add-btn">Ajouter</button>
+                                    <button class="add-btn" onclick="addToCart('Complement', @complement.Id, '@complement.Nom.Replace("'", "\\'")', @complement.Prix, '@complement.Image')">Ajouter</button>
                                 </div>
                             </div>
                         </div>
@@ -110,7 +110,7 @@
                                 <p class="product-description">@menu.Description</p>
                                 <div class="product-footer">
                                     <span class="product-price">@menu.Prix.ToString("N0") FCFA</span>
-                                    <button class="add-btn">Ajouter</button>
+                                    <button class="add-btn" onclick="addToCart('Menu', @menu.Id, '@menu.Nom.Replace("'", "\\'")', @menu.Prix, '@menu.Image')">Ajouter</button>
                                 </div>
                             </div>
                         </div>
@@ -143,5 +143,30 @@
             </button>
         </nav>
     </div>
+
+    <script>
+        function addToCart(type, id, nom, prix, image) {
+            fetch('/Home/AddToCart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    type: type,
+                    id: id,
+                    nom: nom,
+                    prix: prix,
+                    image: image
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelector('.cart-badge').textContent = data.itemCount;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
 </body>
 </html>

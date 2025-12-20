@@ -3,21 +3,25 @@ using Microsoft.AspNetCore.Mvc;
 using csharp_web.Models;
 using csharp_web.Data;
 using Microsoft.EntityFrameworkCore;
+using csharp_web.Services;
 
 namespace csharp_web.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly IPanierService _panierService;
 
-    public HomeController(ApplicationDbContext context)
+    public HomeController(ApplicationDbContext context, IPanierService panierService)
     {
         _context = context;
+        _panierService = panierService;
     }
 
     public async Task<IActionResult> Index(string filter = "all")
     {
         ViewBag.Filter = filter;
+        ViewBag.CartItemCount = _panierService.GetCartItemCount();
 
         if (filter == "all" || filter == "burgers")
         {
@@ -35,6 +39,13 @@ public class HomeController : Controller
         }
 
         return View();
+    }
+
+    [HttpPost]
+    public IActionResult AddToCart(TypeProduit type, int id, string nom, decimal prix, string image)
+    {
+        _panierService.AddToCart(type, id, nom, prix, image);
+        return Json(new { success = true, itemCount = _panierService.GetCartItemCount() });
     }
 
     public IActionResult Privacy()
