@@ -6,7 +6,7 @@ namespace csharp_web.Services
 {
     public interface ICommandeService
     {
-        Task<Commande> CreerCommandeAsync(int clientId, List<PanierItem> panierItems, TypeCommande typeCommande, MethodePaiement methodePaiement, string? modeConsommation);
+        Task<Commande> CreerCommandeAsync(int clientId, List<PanierItem> panierItems, TypeCommande typeCommande, string? modeConsommation);
         Task<List<Commande>> GetCommandesClientAsync(int clientId);
         Task<Commande?> GetCommandeByIdAsync(int id);
         Task AnnulerCommandeAsync(int commandeId, int clientId);
@@ -25,26 +25,19 @@ namespace csharp_web.Services
             _clientService = clientService;
         }
 
-        public async Task<Commande> CreerCommandeAsync(int clientId, List<PanierItem> panierItems, TypeCommande typeCommande, MethodePaiement methodePaiement, string? modeConsommation)
+        public async Task<Commande> CreerCommandeAsync(int clientId, List<PanierItem> panierItems, TypeCommande typeCommande, string? modeConsommation)
         {
-            // Créer le paiement
-            var paiement = new Paiement
-            {
-                Methode = methodePaiement,
-                Date = DateTime.UtcNow,
-                Montant = panierItems.Sum(item => item.Prix * item.Quantite)
-            };
+            // Calculer le total
+            var total = panierItems.Sum(item => item.Prix * item.Quantite);
 
-            var paiementCree = await _commandeRepository.CreatePaiementAsync(paiement);
-
-            // Créer la commande
+            // Créer la commande (sans paiement pour l'instant)
             var commande = new Commande
             {
                 ClientId = clientId,
                 Etat = EtatCommande.EnCours,
                 Date = DateTime.UtcNow,
-                Type = typeCommande, // Garder l'enum, EF devrait gérer la conversion
-                PaiementId = paiementCree.Id
+                Type = typeCommande,
+                Total = total // Stocker le total directement dans la commande
             };
 
             var commandeCreee = await _commandeRepository.CreateCommandeAsync(commande);
