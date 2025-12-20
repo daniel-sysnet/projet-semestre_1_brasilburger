@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using csharp_web.Models;
+using System.Threading;
 
 namespace csharp_web.Data
 {
@@ -17,6 +18,39 @@ namespace csharp_web.Data
         public DbSet<Paiement> Paiements { get; set; }
         public DbSet<Commande> Commandes { get; set; }
         public DbSet<LigneCommande> LigneCommandes { get; set; }
+
+        public override int SaveChanges()
+        {
+            ConvertDateTimeToUtc();
+            return base.SaveChanges();
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            ConvertDateTimeToUtc();
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void ConvertDateTimeToUtc()
+        {
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                // Convertir toutes les propriétés DateTime, pas seulement celles modifiées
+                foreach (var property in entry.Properties)
+                {
+                    if (property.Metadata.ClrType == typeof(DateTime) || property.Metadata.ClrType == typeof(DateTime?))
+                    {
+                        var dateTimeValue = property.CurrentValue as DateTime?;
+                        if (dateTimeValue.HasValue && dateTimeValue.Value.Kind != DateTimeKind.Utc)
+                        {
+                            property.CurrentValue = DateTime.SpecifyKind(dateTimeValue.Value, DateTimeKind.Utc);
+                            // Marquer la propriété comme modifiée pour qu'elle soit incluse dans l'UPDATE
+                            property.IsModified = true;
+                        }
+                    }
+                }
+            }
+        }
 
         // Dictionnaires pour les conversions d'enums
         private static readonly Dictionary<EtatCommande, string> EtatToString = new()
@@ -112,6 +146,7 @@ namespace csharp_web.Data
             modelBuilder.Entity<Commande>().Property(c => c.ClientId).HasColumnName("client_id");
             modelBuilder.Entity<Commande>().Property(c => c.Etat).HasColumnName("etat");
             modelBuilder.Entity<Commande>().Property(c => c.Date).HasColumnName("date");
+            modelBuilder.Entity<Commande>().Property(c => c.Total).HasColumnName("total");
             modelBuilder.Entity<Commande>().Property(c => c.Type).HasColumnName("type");
             modelBuilder.Entity<Commande>().Property(c => c.ZoneId).HasColumnName("zone_id");
             modelBuilder.Entity<Commande>().Property(c => c.LivreurId).HasColumnName("livreur_id");
@@ -143,6 +178,26 @@ namespace csharp_web.Data
             modelBuilder.Entity<Paiement>()
                 .Property(p => p.Methode)
                 .HasConversion<string>();
+
+            // Configuration globale pour les DateTime - forcer UTC
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                foreach (var property in entityType.GetProperties())
+                {
+                    if (property.ClrType == typeof(DateTime))
+                    {
+                        property.SetValueConverter(new Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<DateTime, DateTime>(
+                            v => v.Kind == DateTimeKind.Utc ? v : DateTime.SpecifyKind(v, DateTimeKind.Utc),
+                            v => DateTime.SpecifyKind(v, DateTimeKind.Utc)));
+                    }
+                    else if (property.ClrType == typeof(DateTime?))
+                    {
+                        property.SetValueConverter(new Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<DateTime?, DateTime?>(
+                            v => v.HasValue ? (v.Value.Kind == DateTimeKind.Utc ? v : DateTime.SpecifyKind(v.Value, DateTimeKind.Utc)) : v,
+                            v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v));
+                    }
+                }
+            }
         }
     }
 }
