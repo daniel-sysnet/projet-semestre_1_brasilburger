@@ -3,14 +3,12 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 
 WORKDIR /src
 
-# Copier le fichier solution et restaurer les packages
-COPY ./csharp_web.sln .
-COPY ./csharp_web/*.csproj ./csharp_web/
+# Copier le fichier projet et restaurer les packages
+COPY *.csproj .
 RUN dotnet restore
 
 # Copier le reste du projet
-COPY ./csharp_web/. ./csharp_web/
-WORKDIR /src/csharp_web
+COPY . .
 
 # Build + publish
 RUN dotnet publish -c Release -o /app/publish
