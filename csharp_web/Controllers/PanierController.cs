@@ -25,7 +25,7 @@ namespace csharp_web.Controllers
             ViewBag.Total = _panierService.GetTotal();
             ViewBag.ModeConsommation = _panierService.GetModeConsommation();
             ViewBag.MethodePaiement = _panierService.GetMethodePaiement();
-            ViewBag.Zones = await _context.Zones.ToListAsync();
+            ViewBag.Zones = await _context.Zones.AsNoTracking().ToListAsync();
             return View(items);
         }
 
