@@ -6,12 +6,13 @@ namespace csharp_web.Services
 {
     public interface ICommandeService
     {
-        Task<Commande> CreerCommandeAsync(int clientId, List<PanierItem> panierItems, TypeCommande typeCommande, string? modeConsommation);
+        Task<Commande> CreerCommandeAsync(int clientId, List<PanierItem> panierItems, TypeCommande typeCommande, string? modeConsommation, int? zoneId = null);
         Task<List<Commande>> GetCommandesClientAsync(int clientId);
         Task<Commande?> GetCommandeByIdAsync(int id);
         Task AnnulerCommandeAsync(int commandeId, int clientId);
         Task<List<LigneCommande>> GetLignesCommandeAsync(int commandeId);
         decimal CalculerTotalCommande(List<LigneCommande> lignes);
+        Task MarquerCommandePayeeAsync(int commandeId, MethodePaiement methodePaiement);
     }
 
     public class CommandeService : ICommandeService
@@ -25,7 +26,7 @@ namespace csharp_web.Services
             _clientService = clientService;
         }
 
-        public async Task<Commande> CreerCommandeAsync(int clientId, List<PanierItem> panierItems, TypeCommande typeCommande, string? modeConsommation)
+        public async Task<Commande> CreerCommandeAsync(int clientId, List<PanierItem> panierItems, TypeCommande typeCommande, string? modeConsommation, int? zoneId = null)
         {
             // Calculer le total
             var total = panierItems.Sum(item => item.Prix * item.Quantite);
@@ -37,7 +38,8 @@ namespace csharp_web.Services
                 Etat = EtatCommande.EnCours,
                 Date = DateTime.UtcNow,
                 Type = typeCommande,
-                Total = total // Stocker le total directement dans la commande
+                Total = total,
+                ZoneId = zoneId // Ajouter la zone si livraison
             };
 
             var commandeCreee = await _commandeRepository.CreateCommandeAsync(commande);
@@ -102,6 +104,32 @@ namespace csharp_web.Services
         public async Task<List<LigneCommande>> GetLignesCommandeAsync(int commandeId)
         {
             return await _commandeRepository.GetLignesCommandeAsync(commandeId);
+        }
+
+        public async Task MarquerCommandePayeeAsync(int commandeId, MethodePaiement methodePaiement)
+        {
+            var commande = await _commandeRepository.GetCommandeByIdAsync(commandeId);
+            if (commande == null)
+            {
+                throw new Exception("Commande introuvable");
+            }
+
+            // Créer le paiement
+            var paiement = new Paiement
+            {
+                CommandeId = commandeId,
+                Montant = commande.Total,
+                Methode = methodePaiement,
+                DatePaiement = DateTime.UtcNow
+            };
+
+            await _commandeRepository.CreatePaiementAsync(paiement);
+
+            // Changer l'état de la commande à Terminee
+            commande.Etat = EtatCommande.Terminee;
+            commande.Paiement = paiement;
+
+            await _commandeRepository.UpdateCommandeAsync(commande);
         }
 
         public decimal CalculerTotalCommande(List<LigneCommande> lignes)
