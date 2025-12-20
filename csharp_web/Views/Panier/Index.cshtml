@@ -126,6 +126,24 @@
                     </div>
                 </div>
 
+                @if (modeConsommation == "Livraison")
+                {
+                    <!-- Zone de livraison -->
+                    <div class="section-card">
+                        <h3 class="section-title">Zone de livraison</h3>
+                        <form method="post" action="@Url.Action("SetZoneLivraison", "Panier")">
+                            <select name="zoneId" class="zone-select" required>
+                                <option value="">Sélectionnez une zone</option>
+                                @foreach (var zone in ViewBag.Zones as IEnumerable<csharp_web.Models.Zone> ?? new List<csharp_web.Models.Zone>())
+                                {
+                                    <option value="@zone.Id">@zone.Nom</option>
+                                }
+                            </select>
+                            <button type="submit" class="zone-submit-btn">Confirmer la zone</button>
+                        </form>
+                    </div>
+                }
+
                 <!-- Total -->
                 <div class="section-card">
                     <div class="total-row">
