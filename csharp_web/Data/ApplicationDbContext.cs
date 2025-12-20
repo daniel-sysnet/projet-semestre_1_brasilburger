@@ -125,7 +125,12 @@ namespace csharp_web.Data
             modelBuilder.Entity<Livreur>().Property(l => l.Nom).HasColumnName("nom");
             modelBuilder.Entity<Livreur>().Property(l => l.Prenom).HasColumnName("prenom");
             modelBuilder.Entity<Livreur>().Property(l => l.Telephone).HasColumnName("telephone");
-            modelBuilder.Entity<Livreur>().Property(l => l.ZoneId).HasColumnName("zone_id");
+
+            // Configuration de la relation Livreur - Zone
+            modelBuilder.Entity<Livreur>()
+                .HasOne(l => l.Zone)
+                .WithMany(z => z.Livreurs)
+                .HasForeignKey(l => l.ZoneId);
 
             modelBuilder.Entity<Gestionnaire>().ToTable("gestionnaire");
             modelBuilder.Entity<Gestionnaire>().Property(g => g.Id).HasColumnName("id");
@@ -137,7 +142,8 @@ namespace csharp_web.Data
 
             modelBuilder.Entity<Paiement>().ToTable("paiement");
             modelBuilder.Entity<Paiement>().Property(p => p.Id).HasColumnName("id");
-            modelBuilder.Entity<Paiement>().Property(p => p.Date).HasColumnName("date");
+            modelBuilder.Entity<Paiement>().Property(p => p.CommandeId).HasColumnName("commande_id");
+            modelBuilder.Entity<Paiement>().Property(p => p.DatePaiement).HasColumnName("date");
             modelBuilder.Entity<Paiement>().Property(p => p.Montant).HasColumnName("montant");
             modelBuilder.Entity<Paiement>().Property(p => p.Methode).HasColumnName("methode");
 

@@ -55,10 +55,23 @@ namespace csharp_web.Data
 
             var livreurs = new Livreur[]
             {
-                new Livreur { Nom = "Livreur1", Prenom = "Paul", Telephone = "773456789", ZoneId = 1 },
-                new Livreur { Nom = "Livreur2", Prenom = "Sophie", Telephone = "774567890", ZoneId = 2 }
+                new Livreur { Nom = "Livreur1", Prenom = "Paul", Telephone = "773456789" },
+                new Livreur { Nom = "Livreur2", Prenom = "Sophie", Telephone = "774567890" }
             };
             context.Livreurs.AddRange(livreurs);
+
+            context.SaveChanges();
+
+            // Assigner les zones après création
+            var livreur1 = context.Livreurs.First(l => l.Nom == "Livreur1");
+            var livreur2 = context.Livreurs.First(l => l.Nom == "Livreur2");
+            var zone1 = context.Zones.First(z => z.Nom == "Centre-ville");
+            var zone2 = context.Zones.First(z => z.Nom == "Banlieue Nord");
+
+            livreur1.ZoneId = zone1.Id;
+            livreur2.ZoneId = zone2.Id;
+
+            context.SaveChanges();
 
             var gestionnaires = new Gestionnaire[]
             {

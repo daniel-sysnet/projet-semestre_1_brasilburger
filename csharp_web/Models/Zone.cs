@@ -13,5 +13,7 @@ namespace csharp_web.Models
 
         [Required]
         public decimal Prix { get; set; }
+
+        public ICollection<Livreur> Livreurs { get; set; } = new List<Livreur>();
     }
 }
