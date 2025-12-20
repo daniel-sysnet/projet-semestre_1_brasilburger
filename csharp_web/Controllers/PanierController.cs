@@ -91,12 +91,12 @@ namespace csharp_web.Controllers
             };
 
             var methodePaiement = _panierService.GetMethodePaiement();
-            Console.WriteLine($"PasserCommande - Mode: {modeConsommation}, Type: {typeCommande}, Paiement: {methodePaiement}");
+            Console.WriteLine($"PasserCommande - Mode: {modeConsommation}, Type: {typeCommande}");
 
             try
             {
                 Console.WriteLine("PasserCommande - Création de la commande...");
-                await _commandeService.CreerCommandeAsync(clientId.Value, panierItems, typeCommande, methodePaiement, modeConsommation);
+                await _commandeService.CreerCommandeAsync(clientId.Value, panierItems, typeCommande, modeConsommation);
                 _panierService.ClearCart();
                 TempData["SuccessMessage"] = "Votre commande a été passée avec succès !";
                 Console.WriteLine("PasserCommande - Commande créée avec succès, redirection vers Commande/Index");
