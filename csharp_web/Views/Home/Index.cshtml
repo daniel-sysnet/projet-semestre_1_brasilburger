@@ -43,13 +43,15 @@
             <p class="catalog-subtitle">Découvrez nos délicieux burgers et menus</p>
 
             <!-- Barre de recherche -->
-            <div class="search-bar">
+            <form method="get" action="@Url.Action("Index", "Home")" class="search-bar">
                 <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="11" cy="11" r="8"/>
                     <path d="m21 21-4.35-4.35"/>
                 </svg>
-                <input type="text" class="search-input" placeholder="Rechercher un produit">
-            </div>
+                <input type="text" name="search" value="@ViewBag.Search" class="search-input" placeholder="Rechercher un produit">
+                <input type="hidden" name="filter" value="@filter" />
+                <button type="submit" style="display: none;"></button>
+            </form>
 
             <!-- Filtres -->
             <div class="filters">
