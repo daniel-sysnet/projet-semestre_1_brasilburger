@@ -1,6 +1,8 @@
 using csharp_web.Models;
 using csharp_web.Services;
 using Microsoft.AspNetCore.Mvc;
+using csharp_web.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace csharp_web.Controllers
 {
@@ -8,19 +10,22 @@ namespace csharp_web.Controllers
     {
         private readonly IPanierService _panierService;
         private readonly ICommandeService _commandeService;
+        private readonly ApplicationDbContext _context;
 
-        public PanierController(IPanierService panierService, ICommandeService commandeService)
+        public PanierController(IPanierService panierService, ICommandeService commandeService, ApplicationDbContext context)
         {
             _panierService = panierService;
             _commandeService = commandeService;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var items = _panierService.GetCartItems();
             ViewBag.Total = _panierService.GetTotal();
             ViewBag.ModeConsommation = _panierService.GetModeConsommation();
             ViewBag.MethodePaiement = _panierService.GetMethodePaiement();
+            ViewBag.Zones = await _context.Zones.ToListAsync();
             return View(items);
         }
 
@@ -56,6 +61,13 @@ namespace csharp_web.Controllers
         public IActionResult SetMethodePaiement(MethodePaiement methode)
         {
             _panierService.SetMethodePaiement(methode);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult SetZoneLivraison(int zoneId)
+        {
+            _panierService.SetZoneLivraison(zoneId);
             return RedirectToAction("Index");
         }
 
@@ -96,7 +108,17 @@ namespace csharp_web.Controllers
             try
             {
                 Console.WriteLine("PasserCommande - Création de la commande...");
-                await _commandeService.CreerCommandeAsync(clientId.Value, panierItems, typeCommande, modeConsommation);
+                int? zoneId = null;
+                if (typeCommande == TypeCommande.Livraison)
+                {
+                    zoneId = _panierService.GetZoneLivraison();
+                    if (!zoneId.HasValue)
+                    {
+                        TempData["ErrorMessage"] = "Veuillez sélectionner une zone de livraison.";
+                        return RedirectToAction("Index");
+                    }
+                }
+                await _commandeService.CreerCommandeAsync(clientId.Value, panierItems, typeCommande, modeConsommation, zoneId);
                 _panierService.ClearCart();
                 TempData["SuccessMessage"] = "Votre commande a été passée avec succès !";
                 Console.WriteLine("PasserCommande - Commande créée avec succès, redirection vers Commande/Index");
