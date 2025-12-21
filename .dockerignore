@@ -1,6 +1,13 @@
-.dockerignore
-Dockerfile
-.gitignore
-README.md
-csharp_web.sln
-csharp_web/
+# Fichiers inutiles au build
+**/bin
+**/obj
+
+# Dossiers IDE
+.vs
+.vscode
+
+# Git
+.git
+
+# Divers
+node_modules
