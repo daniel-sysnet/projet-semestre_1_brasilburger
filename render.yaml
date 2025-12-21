@@ -6,6 +6,6 @@ services:
     startCommand: docker run -p $PORT:10000 brasil-burger
     envVars:
       - key: DATABASE_URL
-        sync: false  # Set in Render dashboard
+        value: postgresql://neondb_owner:npg_vy0mdeicai8h@ep-solitary-cake-a4najv73-pooler.us-east-1.aws.neon.tech/brasil_burger_db?sslmode=require
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
