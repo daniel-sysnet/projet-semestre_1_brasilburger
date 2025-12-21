@@ -95,6 +95,10 @@
                                             <h3 class="order-number">Commande #@commande.Id</h3>
                                             <p class="order-date">@commande.Date.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</p>
                                             <p class="order-type">@GetTypeText(commande.Type) @if (commande.Type == csharp_web.Models.TypeCommande.Livraison && commande.Zone != null) { <span>- @commande.Zone.Nom</span> }</p>
+                                            @if (commande.Client != null)
+                                            {
+                                                <p class="order-client">Client : <b>@commande.Client.Nom</b> - <b>@commande.Client.Telephone</b></p>
+                                            }
                                         </div>
                                         <div class="status-container">
                                             <span class="order-status status-@GetStatusClass(commande.Etat)">@GetStatusText(commande.Etat)</span>
@@ -108,16 +112,20 @@
                                                     Annuler
                                                 </button>
                                             }
-                                            @if (commande.Etat == csharp_web.Models.EtatCommande.Validee)
-                                            {
-                                                <button class="pay-btn" onclick="payerCommande(@commande.Id)">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <div class="paiement-options" style="margin-top:10px;">
+                                                <label for="paiement-@commande.Id" style="font-weight:bold;">Mode de paiement :</label>
+                                                <select id="paiement-@commande.Id" class="paiement-select" style="margin-left:8px;">
+                                                    <option value="Wave">Wave</option>
+                                                    <option value="OM">Orange Money</option>
+                                                </select>
+                                                <button class="pay-btn" onclick="payerCommande(@commande.Id)" id="btn-payer-@commande.Id" @(commande.Etat == csharp_web.Models.EtatCommande.Validee ? "" : "disabled")>
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;">
                                                         <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
                                                         <line x1="1" y1="10" x2="23" y2="10"/>
                                                     </svg>
-                                                    Payer
+                                                    <span style="vertical-align:middle;">Payer</span>
                                                 </button>
-                                            }
+                                            </div>
                                         </div>
                                     </div>
 
@@ -245,7 +253,8 @@
         }
 
         function payerCommande(commandeId) {
-            var methodePaiement = 'Wave'; // Par défaut Wave
+            var select = document.getElementById('paiement-' + commandeId);
+            var methodePaiement = select ? select.value : 'Wave';
 
             fetch('/Commande/PayerCommande', {
                 method: 'POST',
