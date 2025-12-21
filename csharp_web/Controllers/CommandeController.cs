@@ -24,7 +24,8 @@ namespace csharp_web.Controllers
             var clientId = HttpContext.Session.GetInt32("ClientId");
             if (!clientId.HasValue)
             {
-                return View();
+                TempData["ErrorMessage"] = "Vous devez être connecté pour voir vos commandes.";
+                return RedirectToAction("Login", "Account");
             }
 
             var commandes = await _commandeService.GetCommandesClientAsync(clientId.Value);
@@ -54,7 +55,7 @@ namespace csharp_web.Controllers
             var clientId = HttpContext.Session.GetInt32("ClientId");
             if (!clientId.HasValue)
             {
-                return Json(new { success = false, message = "Utilisateur non connecté" });
+                return Json(new { success = false, message = "Vous devez être connecté pour annuler une commande." });
             }
 
             try
@@ -75,7 +76,7 @@ namespace csharp_web.Controllers
             var clientId = HttpContext.Session.GetInt32("ClientId");
             if (!clientId.HasValue)
             {
-                return Json(new { success = false, message = "Utilisateur non connecté" });
+                return Json(new { success = false, message = "Vous devez être connecté pour payer une commande." });
             }
 
             try

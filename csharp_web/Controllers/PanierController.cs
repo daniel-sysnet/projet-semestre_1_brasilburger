@@ -75,11 +75,10 @@ namespace csharp_web.Controllers
         public async Task<IActionResult> PasserCommande()
         {
             var clientId = HttpContext.Session.GetInt32("ClientId");
-            Console.WriteLine($"PasserCommande - ClientId: {clientId}");
 
             if (!clientId.HasValue)
             {
-                Console.WriteLine("PasserCommande - Utilisateur non connecté, redirection vers Login");
+                TempData["ErrorMessage"] = "Vous devez être connecté pour passer une commande.";
                 return RedirectToAction("Login", "Account");
             }
 
