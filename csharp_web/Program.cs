@@ -10,6 +10,13 @@ builder.Services.AddControllersWithViews();
 
 // PostgreSQL (Render compatible)
 var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") ?? builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Fix incomplete sslmode in DATABASE_URL
+if (connectionString != null && connectionString.Contains("?sslmode") && !connectionString.Contains("sslmode=require"))
+{
+    connectionString = connectionString.Replace("?sslmode", "?sslmode=require");
+}
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
