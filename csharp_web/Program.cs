@@ -2,25 +2,43 @@ using csharp_web.Data;
 using csharp_web.Repositories;
 using csharp_web.Services;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// MVC
+// ===== MVC =====
 builder.Services.AddControllersWithViews();
 
-// PostgreSQL (Render compatible)
-var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") ?? builder.Configuration.GetConnectionString("DefaultConnection");
+// ===== CONNECTION STRING (PostgreSQL Render / Neon) =====
+// 1. Récupérer depuis variable d'environnement (Render)
+var connectionStringEnv = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
 
-// Fix incomplete sslmode in DATABASE_URL
-if (connectionString != null && connectionString.Contains("?sslmode") && !connectionString.Contains("sslmode=require"))
+// 2. Si variable absente, fallback sur appsettings.json
+var connectionString = connectionStringEnv ?? builder.Configuration.GetConnectionString("DefaultConnection");
+
+// 3. Transforme l'ancienne DATABASE_URL (Postgres URL) en format Npgsql si besoin
+if (!string.IsNullOrEmpty(connectionString) && connectionString.StartsWith("postgres://"))
 {
-    connectionString = connectionString.Replace("?sslmode", "?sslmode=require");
+    var uri = new Uri(connectionString);
+    var userInfo = uri.UserInfo.Split(':');
+    var builderNpgsql = new NpgsqlConnectionStringBuilder
+    {
+        Host = uri.Host,
+        Port = uri.Port > 0 ? uri.Port : 5432,
+        Username = userInfo[0],
+        Password = userInfo[1],
+        Database = uri.AbsolutePath.TrimStart('/'),
+        SslMode = SslMode.Require,
+        TrustServerCertificate = true
+    };
+    connectionString = builderNpgsql.ToString();
 }
 
+// ===== DbContext =====
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-// Session
+// ===== SESSION =====
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -28,12 +46,12 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// Repositories
+// ===== REPOSITORIES =====
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<ICommandeRepository, CommandeRepository>();
 builder.Services.AddScoped<ILivreurRepository, LivreurRepository>();
 
-// Services
+// ===== SERVICES =====
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<ICommandeService, CommandeService>();
 builder.Services.AddScoped<ILivreurService, LivreurService>();
@@ -43,16 +61,22 @@ builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
-
-// ===== MIGRATIONS AUTOMATIQUES (RENDER) =====
-using (var scope = app.Services.CreateScope())
+// ===== MIGRATIONS AUTOMATIQUES =====
+try
 {
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.Migrate();
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        context.Database.Migrate();
+    }
+}
+catch (Exception ex)
+{
+    // Journaliser l'erreur mais ne pas crasher
+    Console.WriteLine("Erreur lors de la migration automatique : " + ex.Message);
 }
 
-
-// Pipeline HTTP
+// ===== PIPELINE HTTP =====
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
