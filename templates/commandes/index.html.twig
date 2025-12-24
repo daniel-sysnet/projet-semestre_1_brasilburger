@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Commandes | Brasil Burger</title>
+    <link rel="stylesheet" href="{{ asset('style.css') }}">
+    <style>
+        .commandes-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .commandes-table th, .commandes-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .commandes-table th {
+            background-color: #f4a62a;
+            color: white;
+        }
+        .btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-danger { background-color: #dc3545; color: white; }
+        .btn-primary { background-color: #007bff; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="logo"></div>
+            <span><strong>Brasil</strong> Burger</span>
+        </div>
+
+        <p class="section-title">Espace Gestionnaire</p>
+
+        <nav class="menu">
+            <a href="{{ path('dashboard') }}">📊 Tableau de Bord</a>
+            <a href="{{ path('commandes_index') }}" class="active">📦 Commandes</a>
+            <a href="#">🛵 Livraison</a>
+            <a href="{{ path('logout') }}" class="logout">🚪 Déconnexion</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <span class="role gestionnaire">Gestionnaire Web</span>
+            <span class="role client">Client</span>
+        </header>
+
+        <!-- CONTENT -->
+        <section class="content">
+            <h1>Gestion des Commandes</h1>
+            <p class="subtitle">Liste de toutes les commandes</p>
+
+            {% for message in app.flashes('success') %}
+                <p style="color: green;">{{ message }}</p>
+            {% endfor %}
+
+            <table class="commandes-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Client</th>
+                        <th>Date</th>
+                        <th>État</th>
+                        <th>Type</th>
+                        <th>Zone</th>
+                        <th>Livreur</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for commande in commandes %}
+                        <tr>
+                            <td>{{ commande.id }}</td>
+                            <td>{{ commande.client.nom }} {{ commande.client.prenom }}</td>
+                            <td>{{ commande.dateCommande|date('d/m/Y H:i') }}</td>
+                            <td>{{ commande.etat }}</td>
+                            <td>{{ commande.type }}</td>
+                            <td>{{ commande.zone ? commande.zone.nom : '-' }}</td>
+                            <td>{{ commande.livreur ? commande.livreur.nom ~ ' ' ~ commande.livreur.prenom : '-' }}</td>
+                            <td>
+                                <a href="{{ path('commandes_show', {id: commande.id}) }}" class="btn btn-primary">Voir</a>
+                                {% if commande.etat == 'En cours' %}
+                                    <form method="post" action="{{ path('commandes_valider', {id: commande.id}) }}" style="display: inline;">
+                                        <button type="submit" class="btn btn-success">Valider</button>
+                                    </form>
+                                {% endif %}
+                                {% if commande.etat in ['En cours', 'Validee'] %}
+                                    <form method="post" action="{{ path('commandes_annuler', {id: commande.id}) }}" style="display: inline;">
+                                        <button type="submit" class="btn btn-danger">Annuler</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+</div>
+
+</body>
+</html>

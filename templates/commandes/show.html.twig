@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Détails Commande | Brasil Burger</title>
+    <link rel="stylesheet" href="{{ asset('style.css') }}">
+    <style>
+        .details { margin-top: 20px; }
+        .details p { margin: 5px 0; }
+        .lignes { margin-top: 20px; }
+        .lignes table { width: 100%; border-collapse: collapse; }
+        .lignes th, .lignes td { padding: 8px; border: 1px solid #ddd; text-align: left; }
+        .lignes th { background-color: #f4a62a; color: white; }
+        .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; margin: 5px; }
+        .btn-secondary { background-color: #6c757d; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="logo"></div>
+            <span><strong>Brasil</strong> Burger</span>
+        </div>
+
+        <p class="section-title">Espace Gestionnaire</p>
+
+        <nav class="menu">
+            <a href="{{ path('dashboard') }}">📊 Tableau de Bord</a>
+            <a href="{{ path('commandes_index') }}" class="active">📦 Commandes</a>
+            <a href="#">🛵 Livraison</a>
+            <a href="{{ path('logout') }}" class="logout">🚪 Déconnexion</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <span class="role gestionnaire">Gestionnaire Web</span>
+            <span class="role client">Client</span>
+        </header>
+
+        <!-- CONTENT -->
+        <section class="content">
+            <h1>Détails de la Commande #{{ commande.id }}</h1>
+
+            <div class="details">
+                <p><strong>Client :</strong> {{ commande.client.nom }} {{ commande.client.prenom }} ({{ commande.client.telephone }})</p>
+                <p><strong>Date :</strong> {{ commande.dateCommande|date('d/m/Y H:i') }}</p>
+                <p><strong>État :</strong> {{ commande.etat }}</p>
+                <p><strong>Type :</strong> {{ commande.type }}</p>
+                <p><strong>Zone :</strong> {{ commande.zone ? commande.zone.nom : 'Aucune' }}</p>
+                <p><strong>Livreur :</strong> {{ commande.livreur ? commande.livreur.nom ~ ' ' ~ commande.livreur.prenom : 'Aucun' }}</p>
+            </div>
+
+            <div class="lignes">
+                <h2>Lignes de commande</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Nom</th>
+                            <th>Quantité</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ligne in commande.ligneCommandes %}
+                            <tr>
+                                <td>
+                                    {% if ligne.burger %}Burger{% elseif ligne.menu %}Menu{% elseif ligne.complement %}Complément{% endif %}
+                                </td>
+                                <td>
+                                    {% if ligne.burger %}{{ ligne.burger.nom }}{% elseif ligne.menu %}{{ ligne.menu.nom }}{% elseif ligne.complement %}{{ ligne.complement.nom }}{% endif %}
+                                </td>
+                                <td>{{ ligne.quantite }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <a href="{{ path('commandes_index') }}" class="btn btn-secondary">Retour à la liste</a>
+        </section>
+    </main>
+
+</div>
+
+</body>
+</html>
