@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | Brasil Burger</title>
+    <link rel="stylesheet" href="{{ asset('style.css') }}">
+</head>
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="logo"></div>
+            <span><strong>Brasil</strong> Burger</span>
+        </div>
+
+        <p class="section-title">Espace Gestionnaire</p>
+
+        <nav class="menu">
+            <a href="#" class="active">📊 Tableau de Bord</a>
+            <a href="#">📦 Commandes</a>
+            <a href="#">🛵 Livraison</a>
+            <a href="{{ path('logout') }}" class="logout">🚪 Déconnexion</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <span class="role gestionnaire">Gestionnaire Web</span>
+            <span class="role client">Client</span>
+        </header>
+
+        <!-- CONTENT -->
+        <section class="content">
+            <h1>Tableau de bord</h1>
+            <p class="subtitle">Statistiques du jour - 12 Décembre 2025</p>
+
+            <div class="cards">
+                <div class="card">
+                    <p class="card-title">Commandes en cours</p>
+                    <p class="card-value blue">3</p>
+                    <p class="card-footer">Aujourd’hui</p>
+                </div>
+
+                <div class="card">
+                    <p class="card-title">Commandes validées</p>
+                    <p class="card-value blue">1</p>
+                    <p class="card-footer">Aujourd’hui</p>
+                </div>
+
+                <div class="card">
+                    <p class="card-title">Recettes journalières</p>
+                    <p class="card-value orange">20.000 FCFA</p>
+                    <p class="card-footer">Aujourd’hui</p>
+                </div>
+
+                <div class="card">
+                    <p class="card-title">Commandes annulées</p>
+                    <p class="card-value blue">1</p>
+                    <p class="card-footer">Aujourd’hui</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+</div>
+
+</body>
+</html>
