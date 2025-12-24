@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: \App\Repository\CommandeRepository::class)]
 #[ORM\Table(name: "commande")]
 class Commande
 {
@@ -34,5 +36,63 @@ class Commande
     #[ORM\JoinColumn(nullable: true)]
     private ?Livreur $livreur = null;
 
+    #[ORM\OneToMany(mappedBy: 'commande', targetEntity: LigneCommande::class)]
+    private Collection $ligneCommandes;
+
+    public function __construct()
+    {
+        $this->ligneCommandes = new ArrayCollection();
+    }
+
     public function getId(): ?int { return $this->id; }
+
+    public function getClient(): Client { return $this->client; }
+
+    public function setClient(Client $client): self
+    {
+        $this->client = $client;
+        return $this;
+    }
+
+    public function getDateCommande(): \DateTimeInterface { return $this->dateCommande; }
+
+    public function setDateCommande(\DateTimeInterface $dateCommande): self
+    {
+        $this->dateCommande = $dateCommande;
+        return $this;
+    }
+
+    public function getEtat(): string { return $this->etat; }
+
+    public function setEtat(string $etat): self
+    {
+        $this->etat = $etat;
+        return $this;
+    }
+
+    public function getType(): string { return $this->type; }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    public function getZone(): ?Zone { return $this->zone; }
+
+    public function setZone(?Zone $zone): self
+    {
+        $this->zone = $zone;
+        return $this;
+    }
+
+    public function getLivreur(): ?Livreur { return $this->livreur; }
+
+    public function setLivreur(?Livreur $livreur): self
+    {
+        $this->livreur = $livreur;
+        return $this;
+    }
+
+    public function getLigneCommandes(): Collection { return $this->ligneCommandes; }
 }
