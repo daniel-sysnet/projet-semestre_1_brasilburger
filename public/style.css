@@ -1,0 +1,146 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background-color: #e5e5e5;
+}
+
+/* LAYOUT */
+.app {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 250px;
+    background-color: #ffffff;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.logo {
+    width: 35px;
+    height: 35px;
+    background-color: #f4a62a;
+    border-radius: 50%;
+}
+
+.section-title {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.menu a {
+    display: block;
+    padding: 12px;
+    text-decoration: none;
+    color: #333;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.menu a:hover {
+    background-color: #f4f4f4;
+}
+
+.menu a.active {
+    background-color: #f4a62a;
+    color: #fff;
+}
+
+.menu a.logout {
+    margin-top: 30px;
+}
+
+/* MAIN */
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* TOP BAR */
+.topbar {
+    background-color: #ffffff;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #ddd;
+}
+
+.role {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.gestionnaire {
+    background-color: #f4a62a;
+    color: #fff;
+}
+
+.client {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* CONTENT */
+.content {
+    padding: 30px;
+}
+
+.subtitle {
+    color: #555;
+    margin-bottom: 30px;
+}
+
+/* CARDS */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.card-title {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.card-value {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.card-footer {
+    font-size: 13px;
+    color: #777;
+}
+
+.blue {
+    color: #1a73e8;
+}
+
+.orange {
+    color: #f4a62a;
+}
