@@ -20,7 +20,7 @@
 
         <nav class="menu">
             <a href="#" class="active">📊 Tableau de Bord</a>
-            <a href="#">📦 Commandes</a>
+            <a href="{{ path('commandes_index') }}">📦 Commandes</a>
             <a href="#">🛵 Livraison</a>
             <a href="{{ path('logout') }}" class="logout">🚪 Déconnexion</a>
         </nav>
@@ -42,25 +42,25 @@
             <div class="cards">
                 <div class="card">
                     <p class="card-title">Commandes en cours</p>
-                    <p class="card-value blue">3</p>
+                    <p class="card-value blue">{{ stats.commandes_en_cours }}</p>
                     <p class="card-footer">Aujourd’hui</p>
                 </div>
 
                 <div class="card">
                     <p class="card-title">Commandes validées</p>
-                    <p class="card-value blue">1</p>
+                    <p class="card-value blue">{{ stats.commandes_validees }}</p>
                     <p class="card-footer">Aujourd’hui</p>
                 </div>
 
                 <div class="card">
                     <p class="card-title">Recettes journalières</p>
-                    <p class="card-value orange">20.000 FCFA</p>
+                    <p class="card-value orange">{{ stats.recettes_journalieres|number_format(0, ',', ' ') }} FCFA</p>
                     <p class="card-footer">Aujourd’hui</p>
                 </div>
 
                 <div class="card">
                     <p class="card-title">Commandes annulées</p>
-                    <p class="card-value blue">1</p>
+                    <p class="card-value blue">{{ stats.commandes_annulees }}</p>
                     <p class="card-footer">Aujourd’hui</p>
                 </div>
             </div>
