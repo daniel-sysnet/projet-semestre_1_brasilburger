@@ -10,4 +10,5 @@ interface CommandeRepositoryInterface
     public function findCommandesDuJour(): array;
     public function countByEtatDuJour(string $etat): int;
     public function getChiffreAffairesDuJour(): float;
+    public function findCommandesALivrerParZone(): array;
 }

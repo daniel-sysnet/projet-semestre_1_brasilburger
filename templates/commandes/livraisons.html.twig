@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Livraisons | Brasil Burger</title>
+    <link rel="stylesheet" href="{{ asset('style.css') }}">
+    <style>
+        .livraisons-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .livraisons-table th, .livraisons-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .livraisons-table th {
+            background-color: #f4a62a;
+            color: white;
+        }
+        .btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary { background-color: #007bff; color: white; }
+        .zone-section {
+            margin-bottom: 40px;
+        }
+        .zone-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #f4a62a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="logo"></div>
+            <span><strong>Brasil</strong> Burger</span>
+        </div>
+
+        <p class="section-title">Espace Gestionnaire</p>
+
+        <nav class="menu">
+            <a href="{{ path('dashboard') }}">📊 Tableau de Bord</a>
+            <a href="{{ path('app_statistics') }}">📈 Statistiques</a>
+            <a href="{{ path('commandes_index') }}">📦 Commandes</a>
+            <a href="{{ path('livreur_index') }}">🛵 Livreurs</a>
+            <a href="{{ path('commandes_livraisons') }}" class="active">🚚 Livraisons</a>
+            <a href="{{ path('logout') }}" class="logout">🚪 Déconnexion</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <span class="role gestionnaire">Gestionnaire Web</span>
+            <span class="role client">Client</span>
+        </header>
+
+        <!-- CONTENT -->
+        <section class="content">
+            <h1>Gestion des Livraisons</h1>
+            <p class="subtitle">Commandes terminées à livrer, groupées par zone</p>
+
+            {% for zone, commandes in commandesParZone %}
+                <div class="zone-section">
+                    <h2 class="zone-title">Zone : {{ zone }}</h2>
+                    <table class="livraisons-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Client</th>
+                                <th>Date</th>
+                                <th>Assigner Livreur</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for commande in commandes %}
+                                <tr>
+                                    <td>{{ commande.id }}</td>
+                                    <td>{{ commande.client.nom }} {{ commande.client.prenom }}</td>
+                                    <td>{{ commande.dateCommande|date('d/m/Y H:i') }}</td>
+                                    <td>
+                                        <form method="post" action="{{ path('commandes_assigner_livreur', {'id': commande.id}) }}" style="display: inline;">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('assigner' ~ commande.id) }}">
+                                            <select name="livreur_id" required>
+                                                <option value="">Choisir un livreur</option>
+                                                {% for livreur in livreursParZone[zone] ?? [] %}
+                                                    <option value="{{ livreur.id }}">{{ livreur.nom }} {{ livreur.prenom }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <button type="submit" class="btn btn-primary">Assigner</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="4">Aucune commande à livrer dans cette zone.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endfor %}
+        </section>
+    </main>
+</div>
+
+</body>
+</html>

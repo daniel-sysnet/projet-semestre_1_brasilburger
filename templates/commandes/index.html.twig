@@ -49,7 +49,8 @@
             <a href="{{ path('dashboard') }}">📊 Tableau de Bord</a>
             <a href="{{ path('app_statistics') }}">📈 Statistiques</a>
             <a href="{{ path('commandes_index') }}" class="active">📦 Commandes</a>
-            <a href="#">🛵 Livraison</a>
+            <a href="{{ path('livreur_index') }}">🛵 Livreurs</a>
+            <a href="{{ path('commandes_livraisons') }}">🚚 Livraisons</a>
             <a href="{{ path('logout') }}" class="logout">🚪 Déconnexion</a>
         </nav>
     </aside>
@@ -99,6 +100,11 @@
                                 {% if commande.etat == 'En cours' %}
                                     <form method="post" action="{{ path('commandes_valider', {id: commande.id}) }}" style="display: inline;">
                                         <button type="submit" class="btn btn-success">Valider</button>
+                                    </form>
+                                {% endif %}
+                                {% if commande.etat == 'Validee' %}
+                                    <form method="post" action="{{ path('commandes_terminer', {id: commande.id}) }}" style="display: inline;">
+                                        <button type="submit" class="btn btn-success">Terminer</button>
                                     </form>
                                 {% endif %}
                                 {% if commande.etat in ['En cours', 'Validee'] %}

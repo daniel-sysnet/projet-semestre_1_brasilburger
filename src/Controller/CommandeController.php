@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Commande;
+use App\Entity\Livreur;
+use App\Entity\Zone;
 use App\Repository\CommandeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,6 +27,31 @@ class CommandeController extends AbstractController
         ]);
     }
 
+    #[Route('/livraisons', name: 'commandes_livraisons')]
+    public function livraisons(EntityManagerInterface $em): Response
+    {
+        $commandes = $this->commandeRepository->findCommandesALivrerParZone();
+
+        // Grouper par zone
+        $commandesParZone = [];
+        $livreursParZone = [];
+        foreach ($commandes as $commande) {
+            $zoneNom = $commande->getZone() ? $commande->getZone()->getNom() : 'Sans zone';
+            $commandesParZone[$zoneNom][] = $commande;
+        }
+
+        // Récupérer les livreurs par zone
+        $zones = $em->getRepository(Zone::class)->findAll();
+        foreach ($zones as $zone) {
+            $livreursParZone[$zone->getNom()] = $em->getRepository(Livreur::class)->findBy(['zone' => $zone]);
+        }
+
+        return $this->render('commandes/livraisons.html.twig', [
+            'commandesParZone' => $commandesParZone,
+            'livreursParZone' => $livreursParZone,
+        ]);
+    }
+
     #[Route('/{id}', name: 'commandes_show')]
     public function show(Commande $commande): Response
     {
@@ -33,27 +60,21 @@ class CommandeController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/valider', name: 'commandes_valider', methods: ['POST'])]
-    public function valider(Commande $commande, EntityManagerInterface $em): Response
+    #[Route('/{id}/assigner-livreur', name: 'commandes_assigner_livreur', methods: ['POST'])]
+    public function assignerLivreur(Request $request, Commande $commande, EntityManagerInterface $em): Response
     {
-        if ($commande->getEtat() === 'En cours') {
-            $commande->setEtat('Validee');
-            $em->flush();
-            $this->addFlash('success', 'Commande validée.');
+        $livreurId = $request->request->get('livreur_id');
+        if ($livreurId) {
+            $livreur = $em->getRepository(Livreur::class)->find($livreurId);
+            if ($livreur && $commande->getZone() === $livreur->getZone()) {
+                $commande->setLivreur($livreur);
+                $em->flush();
+                $this->addFlash('success', 'Livreur assigné à la commande.');
+            } else {
+                $this->addFlash('error', 'Livreur invalide ou zone incompatible.');
+            }
         }
 
-        return $this->redirectToRoute('commandes_index');
-    }
-
-    #[Route('/{id}/annuler', name: 'commandes_annuler', methods: ['POST'])]
-    public function annuler(Commande $commande, EntityManagerInterface $em): Response
-    {
-        if (in_array($commande->getEtat(), ['En cours', 'Validee'])) {
-            $commande->setEtat('Annulee');
-            $em->flush();
-            $this->addFlash('success', 'Commande annulée.');
-        }
-
-        return $this->redirectToRoute('commandes_index');
+        return $this->redirectToRoute('commandes_livraisons');
     }
 }
