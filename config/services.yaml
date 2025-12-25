@@ -24,3 +24,6 @@ services:
 
     App\Repository\StatistiquesRepositoryInterface:
         class: App\Repository\StatistiquesRepository
+
+    App\Repository\LivreurRepositoryInterface:
+        class: App\Repository\LivreurRepository
