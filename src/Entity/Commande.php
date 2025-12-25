@@ -39,6 +39,9 @@ class Commande
     #[ORM\OneToMany(mappedBy: 'commande', targetEntity: LigneCommande::class)]
     private Collection $ligneCommandes;
 
+    #[ORM\OneToOne(mappedBy: 'commande', targetEntity: Paiement::class)]
+    private ?Paiement $paiement = null;
+
     public function __construct()
     {
         $this->ligneCommandes = new ArrayCollection();
@@ -94,5 +97,41 @@ class Commande
         return $this;
     }
 
-    public function getLigneCommandes(): Collection { return $this->ligneCommandes; }
+    public function getPaiement(): ?Paiement { return $this->paiement; }
+
+    public function setPaiement(?Paiement $paiement): self
+    {
+        $this->paiement = $paiement;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LigneCommande>
+     */
+    public function getLigneCommandes(): Collection
+    {
+        return $this->ligneCommandes;
+    }
+
+    public function addLigneCommande(LigneCommande $ligneCommande): static
+    {
+        if (!$this->ligneCommandes->contains($ligneCommande)) {
+            $this->ligneCommandes->add($ligneCommande);
+            $ligneCommande->setCommande($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLigneCommande(LigneCommande $ligneCommande): static
+    {
+        if ($this->ligneCommandes->removeElement($ligneCommande)) {
+            // set the owning side to null (unless already changed)
+            if ($ligneCommande->getCommande() === $this) {
+                $ligneCommande->setCommande(null);
+            }
+        }
+
+        return $this;
+    }
 }

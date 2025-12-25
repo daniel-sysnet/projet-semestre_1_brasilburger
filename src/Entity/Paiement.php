@@ -27,4 +27,52 @@ class Paiement
     private string $methode;
 
     public function getId(): ?int { return $this->id; }
+
+    public function getDatePaiement(): ?\DateTime
+    {
+        return $this->datePaiement;
+    }
+
+    public function setDatePaiement(\DateTime $datePaiement): static
+    {
+        $this->datePaiement = $datePaiement;
+
+        return $this;
+    }
+
+    public function getMontant(): ?float
+    {
+        return $this->montant;
+    }
+
+    public function setMontant(float $montant): static
+    {
+        $this->montant = $montant;
+
+        return $this;
+    }
+
+    public function getMethode(): ?string
+    {
+        return $this->methode;
+    }
+
+    public function setMethode(string $methode): static
+    {
+        $this->methode = $methode;
+
+        return $this;
+    }
+
+    public function getCommande(): ?Commande
+    {
+        return $this->commande;
+    }
+
+    public function setCommande(Commande $commande): static
+    {
+        $this->commande = $commande;
+
+        return $this;
+    }
 }
