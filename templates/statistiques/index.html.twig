@@ -24,9 +24,9 @@
         <p class="section-title">Espace Gestionnaire</p>
 
         <nav class="menu">
-            <a href="{{ path('app_dashboard') }}">📊 Tableau de Bord</a>
+            <a href="{{ path('dashboard') }}">📊 Tableau de Bord</a>
             <a href="{{ path('app_statistics') }}" class="active">📈 Statistiques</a>
-            <a href="#">📦 Commandes</a>
+            <a href="{{ path('commandes_index') }}">📦 Commandes</a>
             <a href="#">🛵 Livraison</a>
             <a href="{{ path('logout') }}" class="logout">🚪 Déconnexion</a>
         </nav>
@@ -54,13 +54,13 @@
 
                 <div class="card">
                     <p class="card-title">Chiffre d'affaires total</p>
-                    <p class="card-value green">{{ chiffreAffairesTotal|number_format(2, ',', ' ') }} €</p>
+                    <p class="card-value green">{{ chiffreAffairesTotal|number_format(2, ',', ' ') }} FCFA</p>
                     <p class="card-footer">Commandes validées</p>
                 </div>
 
                 <div class="card">
                     <p class="card-title">Revenus aujourd'hui</p>
-                    <p class="card-value orange">{{ revenusAujourdhui|number_format(2, ',', ' ') }} €</p>
+                    <p class="card-value orange">{{ revenusAujourdhui|number_format(2, ',', ' ') }} FCFA</p>
                     <p class="card-footer">Journée en cours</p>
                 </div>
             </div>
