@@ -21,10 +21,11 @@ namespace csharp_web.Models
         public Commande? Commande { get; set; }
 
         [Required]
+        [Column("date_paiement")]
         public DateTime DatePaiement { get; set; }
 
         [Required]
-        public decimal Montant { get; set; }
+        public double Montant { get; set; }
 
         [Required]
         public MethodePaiement Methode { get; set; }

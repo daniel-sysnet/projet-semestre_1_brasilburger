@@ -14,7 +14,7 @@ namespace csharp_web.Models
         public string Description { get; set; }
 
         [Required]
-        public decimal Prix { get; set; }
+        public double Prix { get; set; }
 
         [StringLength(255)]
         public string Image { get; set; }

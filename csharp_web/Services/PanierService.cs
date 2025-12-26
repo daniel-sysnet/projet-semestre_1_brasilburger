@@ -6,12 +6,12 @@ namespace csharp_web.Services
 {
     public interface IPanierService
     {
-        void AddToCart(TypeProduit type, int id, string nom, decimal prix, string image);
+        void AddToCart(TypeProduit type, int id, string nom, double prix, string image);
         void RemoveFromCart(int itemId);
         void UpdateQuantity(int itemId, int quantity);
         List<PanierItem> GetCartItems();
         int GetCartItemCount();
-        decimal GetTotal();
+        double GetTotal();
         void ClearCart();
         void SetModeConsommation(string mode);
         string GetModeConsommation();
@@ -34,7 +34,7 @@ namespace csharp_web.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public void AddToCart(TypeProduit type, int id, string nom, decimal prix, string image)
+        public void AddToCart(TypeProduit type, int id, string nom, double prix, string image)
         {
             var cart = GetCartItems();
             var existingItem = cart.FirstOrDefault(i => i.Type == type && i.Id == id);
@@ -98,7 +98,7 @@ namespace csharp_web.Services
             return GetCartItems().Sum(i => i.Quantite);
         }
 
-        public decimal GetTotal()
+        public double GetTotal()
         {
             return GetCartItems().Sum(i => i.Prix * i.Quantite);
         }

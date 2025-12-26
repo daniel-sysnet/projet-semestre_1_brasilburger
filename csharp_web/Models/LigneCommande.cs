@@ -35,7 +35,7 @@ namespace csharp_web.Models
 
         // Propriété calculée pour le prix unitaire (non persistée)
         [NotMapped]
-        public decimal PrixUnitaire
+        public double PrixUnitaire
         {
             get
             {

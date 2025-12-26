@@ -24,7 +24,5 @@ namespace csharp_web.Models
 
         [ForeignKey("ZoneId")]
         public Zone? Zone { get; set; }
-
-        public ICollection<Zone> Zones { get; set; } = new List<Zone>();
     }
 }

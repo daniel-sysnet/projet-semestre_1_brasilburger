@@ -12,7 +12,7 @@ namespace csharp_web.Models
         public string Nom { get; set; }
 
         [Required]
-        public decimal Prix { get; set; }
+        public double Prix { get; set; }
 
         public ICollection<Livreur> Livreurs { get; set; } = new List<Livreur>();
     }

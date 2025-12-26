@@ -85,7 +85,7 @@
                         {
                             var commande = item.Commande as csharp_web.Models.Commande;
                             var lignes = item.Lignes as List<csharp_web.Models.LigneCommande>;
-                            var total = item.Total as decimal?;
+                            var total = (decimal)item.Total;
 
                             if (commande != null)
                             {
@@ -136,7 +136,7 @@
                                             {
                                                 var nomProduit = "Produit inconnu";
                                                 var imageProduit = "";
-                                                var prixUnitaire = 0m;
+                                                var prixUnitaire = 0.0;
 
                                                 if (ligne.Burger != null)
                                                 {
@@ -179,6 +179,17 @@
                                                     <span class="item-price">@((int)(prixUnitaire * ligne.Quantite))</span>
                                                 </div>
                                             }
+                                        </div>
+                                    }
+
+                                    @if (commande.Type == csharp_web.Models.TypeCommande.Livraison && commande.Zone != null)
+                                    {
+                                        <div class="order-delivery">
+                                            <div class="delivery-info">
+                                                <span class="delivery-label">Livraison</span>
+                                                <span class="delivery-zone">@commande.Zone.Nom</span>
+                                            </div>
+                                            <span class="delivery-price">@((int)commande.Zone.Prix)</span>
                                         </div>
                                     }
 

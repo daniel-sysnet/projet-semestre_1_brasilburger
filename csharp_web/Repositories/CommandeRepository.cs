@@ -13,6 +13,7 @@ namespace csharp_web.Repositories
         Task<List<LigneCommande>> GetLignesCommandeAsync(int commandeId);
         Task CreateLigneCommandeAsync(LigneCommande ligneCommande);
         Task<Paiement> CreatePaiementAsync(Paiement paiement);
+        Task<Zone?> GetZoneByIdAsync(int id);
     }
 
     public class CommandeRepository : ICommandeRepository
@@ -80,6 +81,11 @@ namespace csharp_web.Repositories
             _context.Paiements.Add(paiement);
             await _context.SaveChangesAsync();
             return paiement;
+        }
+
+        public async Task<Zone?> GetZoneByIdAsync(int id)
+        {
+            return await _context.Zones.FirstOrDefaultAsync(z => z.Id == id);
         }
     }
 }

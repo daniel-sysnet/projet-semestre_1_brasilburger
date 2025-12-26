@@ -16,26 +16,26 @@ namespace csharp_web.Data
             // Insérer les données
             var burgers = new Burger[]
             {
-                new Burger { Nom = "Cheeseburger", Description = "Burger classique avec fromage", Prix = 5000.00m, Image = "cheeseburger.jpg" },
-                new Burger { Nom = "Big Mac", Description = "Burger premium avec double viande", Prix = 7000.00m, Image = "bigmac.jpg" },
-                new Burger { Nom = "Chicken Burger", Description = "Burger au poulet grillé", Prix = 6000.00m, Image = "chicken.jpg" }
+                new Burger { Nom = "Cheeseburger", Description = "Burger classique avec fromage", Prix = 5000.00, Image = "cheeseburger.jpg" },
+                new Burger { Nom = "Big Mac", Description = "Burger premium avec double viande", Prix = 7000.00, Image = "bigmac.jpg" },
+                new Burger { Nom = "Chicken Burger", Description = "Burger au poulet grillé", Prix = 6000.00, Image = "chicken.jpg" }
             };
             context.Burgers.AddRange(burgers);
 
             var complements = new Complement[]
             {
-                new Complement { Nom = "Frites", Description = "Frites croustillantes", Prix = 2000.00m, Image = "frites.jpg" },
-                new Complement { Nom = "Riz", Description = "Riz parfumé", Prix = 1500.00m, Image = "riz.jpg" },
-                new Complement { Nom = "Sauce Ketchup", Description = "Sauce ketchup maison", Prix = 500.00m, Image = "ketchup.jpg" },
-                new Complement { Nom = "Coca Cola", Description = "Boisson gazeuse Coca Cola", Prix = 1500.00m, Image = "coca.jpg" },
-                new Complement { Nom = "Eau", Description = "Eau minérale", Prix = 1000.00m, Image = "eau.jpg" }
+                new Complement { Nom = "Frites", Description = "Frites croustillantes", Prix = 2000.00, Image = "frites.jpg" },
+                new Complement { Nom = "Riz", Description = "Riz parfumé", Prix = 1500.00, Image = "riz.jpg" },
+                new Complement { Nom = "Sauce Ketchup", Description = "Sauce ketchup maison", Prix = 500.00, Image = "ketchup.jpg" },
+                new Complement { Nom = "Coca Cola", Description = "Boisson gazeuse Coca Cola", Prix = 1500.00, Image = "coca.jpg" },
+                new Complement { Nom = "Eau", Description = "Eau minérale", Prix = 1000.00, Image = "eau.jpg" }
             };
             context.Complements.AddRange(complements);
 
             var menus = new Menu[]
             {
-                new Menu { Nom = "Menu Cheeseburger", Description = "Menu complet avec Cheeseburger", Prix = 8500.00m, Image = "menu_cheese.jpg" },
-                new Menu { Nom = "Menu Big Mac", Description = "Menu premium avec Big Mac", Prix = 10500.00m, Image = "menu_bigmac.jpg" }
+                new Menu { Nom = "Menu Cheeseburger", Description = "Menu complet avec Cheeseburger", Prix = 8500.00, Image = "menu_cheese.jpg" },
+                new Menu { Nom = "Menu Big Mac", Description = "Menu premium avec Big Mac", Prix = 10500.00, Image = "menu_bigmac.jpg" }
             };
             context.Menus.AddRange(menus);
 
@@ -48,8 +48,8 @@ namespace csharp_web.Data
 
             var zones = new Zone[]
             {
-                new Zone { Nom = "Centre-ville", Prix = 2000.00m },
-                new Zone { Nom = "Banlieue Nord", Prix = 2500.00m }
+                new Zone { Nom = "Centre-ville", Prix = 2000.00 },
+                new Zone { Nom = "Banlieue Nord", Prix = 2500.00 }
             };
             context.Zones.AddRange(zones);
 
@@ -83,15 +83,15 @@ namespace csharp_web.Data
 
             var paiements = new Paiement[]
             {
-                new Paiement { DatePaiement = new DateTime(2025, 12, 13), Montant = 8500.00m, Methode = MethodePaiement.Wave },
-                new Paiement { DatePaiement = new DateTime(2025, 12, 13), Montant = 10500.00m, Methode = MethodePaiement.OM }
+                new Paiement { DatePaiement = new DateTime(2025, 12, 13), Montant = 8500.00, Methode = MethodePaiement.Wave },
+                new Paiement { DatePaiement = new DateTime(2025, 12, 13), Montant = 10500.00, Methode = MethodePaiement.OM }
             };
             context.Paiements.AddRange(paiements);
 
             var commandes = new Commande[]
             {
-                new Commande { ClientId = 1, Etat = EtatCommande.Terminee, Date = new DateTime(2025, 12, 13), Total = 8500.00m, Type = TypeCommande.Livraison, ZoneId = 1, LivreurId = 1, PaiementId = 1 },
-                new Commande { ClientId = 2, Etat = EtatCommande.EnCours, Date = new DateTime(2025, 12, 13), Total = 10500.00m, Type = TypeCommande.SurPlace, PaiementId = 2 }
+                new Commande { ClientId = 1, Etat = EtatCommande.Terminee, Date = new DateTime(2025, 12, 13), Type = TypeCommande.Livraison, ZoneId = 1, LivreurId = 1, PaiementId = 1 },
+                new Commande { ClientId = 2, Etat = EtatCommande.EnCours, Date = new DateTime(2025, 12, 13), Type = TypeCommande.SurPlace, PaiementId = 2 }
             };
             context.Commandes.AddRange(commandes);
 

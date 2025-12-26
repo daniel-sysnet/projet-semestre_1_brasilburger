@@ -22,15 +22,37 @@ namespace csharp_web.Controllers
         public async Task<IActionResult> Index()
         {
             var items = _panierService.GetCartItems();
-            ViewBag.Total = _panierService.GetTotal();
-            ViewBag.ModeConsommation = _panierService.GetModeConsommation();
+            var itemsTotal = _panierService.GetTotal();
+            var total = itemsTotal;
+            var mode = _panierService.GetModeConsommation();
+            double deliveryPrice = 0;
+
+            if (mode == "Livraison")
+            {
+                var zoneId = _panierService.GetZoneLivraison();
+                if (zoneId.HasValue)
+                {
+                    var zone = await _context.Zones.FindAsync(zoneId.Value);
+                    if (zone != null)
+                    {
+                        deliveryPrice = zone.Prix;
+                        total += zone.Prix;
+                    }
+                }
+            }
+
+            ViewBag.Total = total;
+            ViewBag.ItemsTotal = itemsTotal;
+            ViewBag.DeliveryPrice = deliveryPrice;
+            ViewBag.ModeConsommation = mode;
             ViewBag.MethodePaiement = _panierService.GetMethodePaiement();
             ViewBag.Zones = await _context.Zones.AsNoTracking().ToListAsync();
+            ViewBag.SelectedZoneId = _panierService.GetZoneLivraison();
             return View(items);
         }
 
         [HttpPost]
-        public IActionResult AddToCart(TypeProduit type, int id, string nom, decimal prix, string image)
+        public IActionResult AddToCart(TypeProduit type, int id, string nom, double prix, string image)
         {
             _panierService.AddToCart(type, id, nom, prix, image);
             return RedirectToAction("Index", "Home");

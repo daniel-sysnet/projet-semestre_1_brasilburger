@@ -11,7 +11,7 @@ namespace csharp_web.Services
         Task<Commande?> GetCommandeByIdAsync(int id);
         Task AnnulerCommandeAsync(int commandeId, int clientId);
         Task<List<LigneCommande>> GetLignesCommandeAsync(int commandeId);
-        decimal CalculerTotalCommande(List<LigneCommande> lignes);
+        double CalculerTotalCommande(List<LigneCommande> lignes);
         Task MarquerCommandePayeeAsync(int commandeId, MethodePaiement methodePaiement);
     }
 
@@ -28,8 +28,18 @@ namespace csharp_web.Services
 
         public async Task<Commande> CreerCommandeAsync(int clientId, List<PanierItem> panierItems, TypeCommande typeCommande, string? modeConsommation, int? zoneId = null)
         {
-            // Calculer le total
+            // Calculer le total des articles
             var total = panierItems.Sum(item => item.Prix * item.Quantite);
+
+            // Ajouter le prix de livraison si c'est une livraison
+            if (typeCommande == TypeCommande.Livraison && zoneId.HasValue)
+            {
+                var zone = await _commandeRepository.GetZoneByIdAsync(zoneId.Value);
+                if (zone != null)
+                {
+                    total += zone.Prix;
+                }
+            }
 
             // Créer la commande (sans paiement pour l'instant)
             var commande = new Commande
@@ -75,12 +85,36 @@ namespace csharp_web.Services
 
         public async Task<List<Commande>> GetCommandesClientAsync(int clientId)
         {
-            return await _commandeRepository.GetCommandesByClientIdAsync(clientId);
+            var commandes = await _commandeRepository.GetCommandesByClientIdAsync(clientId);
+            foreach (var commande in commandes)
+            {
+                var lignes = await GetLignesCommandeAsync(commande.Id);
+                commande.Total = CalculerTotalCommande(lignes);
+
+                // Ajouter le prix de livraison si c'est une livraison
+                if (commande.Type == TypeCommande.Livraison && commande.Zone != null)
+                {
+                    commande.Total += commande.Zone.Prix;
+                }
+            }
+            return commandes;
         }
 
         public async Task<Commande?> GetCommandeByIdAsync(int id)
         {
-            return await _commandeRepository.GetCommandeByIdAsync(id);
+            var commande = await _commandeRepository.GetCommandeByIdAsync(id);
+            if (commande != null)
+            {
+                var lignes = await GetLignesCommandeAsync(id);
+                commande.Total = CalculerTotalCommande(lignes);
+
+                // Ajouter le prix de livraison si c'est une livraison
+                if (commande.Type == TypeCommande.Livraison && commande.Zone != null)
+                {
+                    commande.Total += commande.Zone.Prix;
+                }
+            }
+            return commande;
         }
 
         public async Task AnnulerCommandeAsync(int commandeId, int clientId)
@@ -132,7 +166,7 @@ namespace csharp_web.Services
             await _commandeRepository.UpdateCommandeAsync(commande);
         }
 
-        public decimal CalculerTotalCommande(List<LigneCommande> lignes)
+        public double CalculerTotalCommande(List<LigneCommande> lignes)
         {
             return lignes.Sum(l => l.PrixUnitaire * l.Quantite);
         }

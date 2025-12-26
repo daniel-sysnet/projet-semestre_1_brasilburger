@@ -16,7 +16,7 @@ namespace csharp_web.Repositories
         public async Task<Livreur?> AuthenticateAsync(string telephone)
         {
             return await _context.Livreurs
-                .Include(l => l.Zones)
+                .Include(l => l.Zone)
                 .FirstOrDefaultAsync(l => l.Telephone == telephone);
         }
 
@@ -51,12 +51,12 @@ namespace csharp_web.Repositories
 
         public async Task<List<Livreur>> GetAllLivreursAsync()
         {
-            return await _context.Livreurs.Include(l => l.Zones).ToListAsync();
+            return await _context.Livreurs.Include(l => l.Zone).ToListAsync();
         }
 
         public async Task<Livreur?> GetLivreurByIdAsync(int id)
         {
-            return await _context.Livreurs.Include(l => l.Zones).FirstOrDefaultAsync(l => l.Id == id);
+            return await _context.Livreurs.Include(l => l.Zone).FirstOrDefaultAsync(l => l.Id == id);
         }
 
         public async Task UpdateLivreurAsync(Livreur livreur)

@@ -37,6 +37,12 @@ namespace csharp_web.Controllers
                 var lignes = await _commandeService.GetLignesCommandeAsync(commande.Id);
                 var total = _commandeService.CalculerTotalCommande(lignes);
 
+                // Ajouter le prix de livraison si c'est une livraison
+                if (commande.Type == TypeCommande.Livraison && commande.Zone != null)
+                {
+                    total += commande.Zone.Prix;
+                }
+
                 commandesAvecDetails.Add(new
                 {
                     Commande = commande,
