@@ -56,17 +56,20 @@ namespace csharp_web.Data
         private static readonly Dictionary<EtatCommande, string> EtatToString = new()
         {
             { EtatCommande.EnCours, "En cours" },
-            { EtatCommande.Validee, "Validée" },
-            { EtatCommande.Terminee, "Terminée" },
-            { EtatCommande.Annulee, "Annulée" }
+            { EtatCommande.Validee, "Validee" },
+            { EtatCommande.Terminee, "Terminee" },
+            { EtatCommande.Annulee, "Annulee" }
         };
 
         private static readonly Dictionary<string, EtatCommande> StringToEtat = new()
         {
             { "En cours", EtatCommande.EnCours },
             { "Validée", EtatCommande.Validee },
+            { "Validee", EtatCommande.Validee },
             { "Terminée", EtatCommande.Terminee },
-            { "Annulée", EtatCommande.Annulee }
+            { "Terminee", EtatCommande.Terminee },
+            { "Annulée", EtatCommande.Annulee },
+            { "Annulee", EtatCommande.Annulee }
         };
 
         private static readonly Dictionary<TypeCommande, string> TypeToString = new()
@@ -89,42 +92,43 @@ namespace csharp_web.Data
 
             // Configurations pour correspondre aux noms de tables et colonnes du script SQL (minuscules)
             modelBuilder.Entity<Burger>().ToTable("burger");
-            modelBuilder.Entity<Burger>().Property(b => b.Id).HasColumnName("id");
+            modelBuilder.Entity<Burger>().Property(b => b.Id).HasColumnName("id").ValueGeneratedOnAdd();
             modelBuilder.Entity<Burger>().Property(b => b.Nom).HasColumnName("nom");
             modelBuilder.Entity<Burger>().Property(b => b.Description).HasColumnName("description");
             modelBuilder.Entity<Burger>().Property(b => b.Prix).HasColumnName("prix");
             modelBuilder.Entity<Burger>().Property(b => b.Image).HasColumnName("image");
 
             modelBuilder.Entity<Complement>().ToTable("complement");
-            modelBuilder.Entity<Complement>().Property(c => c.Id).HasColumnName("id");
+            modelBuilder.Entity<Complement>().Property(c => c.Id).HasColumnName("id").ValueGeneratedOnAdd();
             modelBuilder.Entity<Complement>().Property(c => c.Nom).HasColumnName("nom");
             modelBuilder.Entity<Complement>().Property(c => c.Description).HasColumnName("description");
             modelBuilder.Entity<Complement>().Property(c => c.Prix).HasColumnName("prix");
             modelBuilder.Entity<Complement>().Property(c => c.Image).HasColumnName("image");
 
             modelBuilder.Entity<Menu>().ToTable("menu");
-            modelBuilder.Entity<Menu>().Property(m => m.Id).HasColumnName("id");
+            modelBuilder.Entity<Menu>().Property(m => m.Id).HasColumnName("id").ValueGeneratedOnAdd();
             modelBuilder.Entity<Menu>().Property(m => m.Nom).HasColumnName("nom");
             modelBuilder.Entity<Menu>().Property(m => m.Description).HasColumnName("description");
             modelBuilder.Entity<Menu>().Property(m => m.Prix).HasColumnName("prix");
             modelBuilder.Entity<Menu>().Property(m => m.Image).HasColumnName("image");
 
             modelBuilder.Entity<Client>().ToTable("client");
-            modelBuilder.Entity<Client>().Property(c => c.Id).HasColumnName("id");
+            modelBuilder.Entity<Client>().Property(c => c.Id).HasColumnName("id").ValueGeneratedOnAdd();
             modelBuilder.Entity<Client>().Property(c => c.Nom).HasColumnName("nom");
             modelBuilder.Entity<Client>().Property(c => c.Prenom).HasColumnName("prenom");
             modelBuilder.Entity<Client>().Property(c => c.Telephone).HasColumnName("telephone");
 
             modelBuilder.Entity<Zone>().ToTable("zone");
-            modelBuilder.Entity<Zone>().Property(z => z.Id).HasColumnName("id");
+            modelBuilder.Entity<Zone>().Property(z => z.Id).HasColumnName("id").ValueGeneratedOnAdd();
             modelBuilder.Entity<Zone>().Property(z => z.Nom).HasColumnName("nom");
             modelBuilder.Entity<Zone>().Property(z => z.Prix).HasColumnName("prix");
 
             modelBuilder.Entity<Livreur>().ToTable("livreur");
-            modelBuilder.Entity<Livreur>().Property(l => l.Id).HasColumnName("id");
+            modelBuilder.Entity<Livreur>().Property(l => l.Id).HasColumnName("id").ValueGeneratedOnAdd();
             modelBuilder.Entity<Livreur>().Property(l => l.Nom).HasColumnName("nom");
             modelBuilder.Entity<Livreur>().Property(l => l.Prenom).HasColumnName("prenom");
             modelBuilder.Entity<Livreur>().Property(l => l.Telephone).HasColumnName("telephone");
+            modelBuilder.Entity<Livreur>().Property(l => l.ZoneId).HasColumnName("zone_id");
 
             // Configuration de la relation Livreur - Zone
             modelBuilder.Entity<Livreur>()
@@ -133,7 +137,7 @@ namespace csharp_web.Data
                 .HasForeignKey(l => l.ZoneId);
 
             modelBuilder.Entity<Gestionnaire>().ToTable("gestionnaire");
-            modelBuilder.Entity<Gestionnaire>().Property(g => g.Id).HasColumnName("id");
+            modelBuilder.Entity<Gestionnaire>().Property(g => g.Id).HasColumnName("id").ValueGeneratedOnAdd();
             modelBuilder.Entity<Gestionnaire>().Property(g => g.Nom).HasColumnName("nom");
             modelBuilder.Entity<Gestionnaire>().Property(g => g.Prenom).HasColumnName("prenom");
             modelBuilder.Entity<Gestionnaire>().Property(g => g.Telephone).HasColumnName("telephone");
@@ -141,25 +145,24 @@ namespace csharp_web.Data
             modelBuilder.Entity<Gestionnaire>().Property(g => g.Password).HasColumnName("password");
 
             modelBuilder.Entity<Paiement>().ToTable("paiement");
-            modelBuilder.Entity<Paiement>().Property(p => p.Id).HasColumnName("id");
+            modelBuilder.Entity<Paiement>().Property(p => p.Id).HasColumnName("id").ValueGeneratedOnAdd();
             modelBuilder.Entity<Paiement>().Property(p => p.CommandeId).HasColumnName("commande_id");
-            modelBuilder.Entity<Paiement>().Property(p => p.DatePaiement).HasColumnName("date");
+            modelBuilder.Entity<Paiement>().Property(p => p.DatePaiement).HasColumnName("date_paiement");
             modelBuilder.Entity<Paiement>().Property(p => p.Montant).HasColumnName("montant");
             modelBuilder.Entity<Paiement>().Property(p => p.Methode).HasColumnName("methode");
 
             modelBuilder.Entity<Commande>().ToTable("commande");
-            modelBuilder.Entity<Commande>().Property(c => c.Id).HasColumnName("id");
+            modelBuilder.Entity<Commande>().Property(c => c.Id).HasColumnName("id").ValueGeneratedOnAdd();
             modelBuilder.Entity<Commande>().Property(c => c.ClientId).HasColumnName("client_id");
             modelBuilder.Entity<Commande>().Property(c => c.Etat).HasColumnName("etat");
-            modelBuilder.Entity<Commande>().Property(c => c.Date).HasColumnName("date");
-            modelBuilder.Entity<Commande>().Property(c => c.Total).HasColumnName("total");
+            modelBuilder.Entity<Commande>().Property(c => c.Date).HasColumnName("date_commande");
             modelBuilder.Entity<Commande>().Property(c => c.Type).HasColumnName("type");
             modelBuilder.Entity<Commande>().Property(c => c.ZoneId).HasColumnName("zone_id");
             modelBuilder.Entity<Commande>().Property(c => c.LivreurId).HasColumnName("livreur_id");
             modelBuilder.Entity<Commande>().Property(c => c.PaiementId).HasColumnName("paiement_id");
 
-            modelBuilder.Entity<LigneCommande>().ToTable("lignecommande");
-            modelBuilder.Entity<LigneCommande>().Property(l => l.Id).HasColumnName("id");
+            modelBuilder.Entity<LigneCommande>().ToTable("ligne_commande");
+            modelBuilder.Entity<LigneCommande>().Property(l => l.Id).HasColumnName("id").ValueGeneratedOnAdd();
             modelBuilder.Entity<LigneCommande>().Property(l => l.CommandeId).HasColumnName("commande_id");
             modelBuilder.Entity<LigneCommande>().Property(l => l.BurgerId).HasColumnName("burger_id");
             modelBuilder.Entity<LigneCommande>().Property(l => l.MenuId).HasColumnName("menu_id");
