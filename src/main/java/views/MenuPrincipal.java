@@ -64,7 +64,7 @@ public class MenuPrincipal {
         System.out.print("Description : ");
         String description = scanner.nextLine();
 
-        Burger burger = new Burger(0, nom, prix, image, description);
+        Burger burger = new Burger(0, nom, prix, image, description, true);
         burgerService.ajouterBurger(burger);
         System.out.println("Burger ajouté.");
     }
@@ -119,7 +119,7 @@ public class MenuPrincipal {
         System.out.print("Description : ");
         String description = scanner.nextLine();
 
-        Complement complement = new Complement(0, nom, prix, image, description);
+        Complement complement = new Complement(0, nom, prix, image, description, true);
         complementService.ajouterComplement(complement);
         System.out.println("Complément ajouté.");
     }
@@ -213,7 +213,7 @@ public class MenuPrincipal {
             }
         }
 
-        Menu menu = new Menu(0, nom, prixTotal, image, description);
+        Menu menu = new Menu(0, nom, prixTotal, image, description, true);
         menuService.ajouterMenu(menu);
         System.out.println("Menu ajouté avec prix calculé : " + prixTotal + " FCFA.");
     }

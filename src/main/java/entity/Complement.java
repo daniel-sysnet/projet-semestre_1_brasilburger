@@ -6,16 +6,18 @@ public class Complement {
     private double prix;
     private String image;
     private String description;
+    private boolean actif;
 
     public Complement() {
     }
 
-    public Complement(int id, String nom, double prix, String image, String description) {
+    public Complement(int id, String nom, double prix, String image, String description, boolean actif) {
         this.id = id;
         this.nom = nom;
         this.prix = prix;
         this.image = image;
         this.description = description;
+        this.actif = actif;
     }
 
     public int getId() {
@@ -58,6 +60,14 @@ public class Complement {
         this.description = description;
     }
 
+    public boolean isActif() {
+        return actif;
+    }
+
+    public void setActif(boolean actif) {
+        this.actif = actif;
+    }
+
     @Override
     public String toString() {
         return "Complement{" +
@@ -66,6 +76,7 @@ public class Complement {
                 ", prix=" + prix +
                 ", image='" + image + '\'' +
                 ", description='" + description + '\'' +
+                ", actif=" + actif +
                 '}';
     }
 }

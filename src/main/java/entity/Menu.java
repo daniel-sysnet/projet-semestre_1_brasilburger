@@ -1,21 +1,23 @@
 package entity;
 
-public class Burger {
+public class Menu {
     private int id;
     private String nom;
     private double prix;
     private String image;
     private String description;
+    private boolean actif;
 
-    public Burger() {
+    public Menu() {
     }
 
-    public Burger(int id, String nom, double prix, String image, String description) {
+    public Menu(int id, String nom, double prix, String image, String description, boolean actif) {
         this.id = id;
         this.nom = nom;
         this.prix = prix;
         this.image = image;
         this.description = description;
+        this.actif = actif;
     }
 
     public int getId() {
@@ -58,14 +60,23 @@ public class Burger {
         this.description = description;
     }
 
+    public boolean isActif() {
+        return actif;
+    }
+
+    public void setActif(boolean actif) {
+        this.actif = actif;
+    }
+
     @Override
     public String toString() {
-        return "Burger{" +
+        return "Menu{" +
                 "id=" + id +
                 ", nom='" + nom + '\'' +
                 ", prix=" + prix +
                 ", image='" + image + '\'' +
                 ", description='" + description + '\'' +
+                ", actif=" + actif +
                 '}';
     }
 }
