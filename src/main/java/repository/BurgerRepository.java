@@ -7,11 +7,11 @@ import java.util.List;
 
 public class BurgerRepository {
     public void save(Burger burger) {
-        String sql = "INSERT INTO Burger (id, nom, prix, image, description, actif) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO burger (id, nom, prix, image, description, actif) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             // Calculer le prochain ID
-            String maxIdSql = "SELECT COALESCE(MAX(id), 0) + 1 FROM Burger";
+            String maxIdSql = "SELECT COALESCE(MAX(id), 0) + 1 FROM burger";
             try (PreparedStatement maxStmt = conn.prepareStatement(maxIdSql);
                     ResultSet rs = maxStmt.executeQuery()) {
                 int nextId = 1;
@@ -33,7 +33,7 @@ public class BurgerRepository {
     }
 
     public void update(Burger burger) {
-        String sql = "UPDATE Burger SET nom = ?, prix = ?, image = ?, description = ?, actif = ? WHERE id = ?";
+        String sql = "UPDATE burger SET nom = ?, prix = ?, image = ?, description = ?, actif = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, burger.getNom());
@@ -49,7 +49,7 @@ public class BurgerRepository {
     }
 
     public void archive(int id) {
-        String sql = "UPDATE Burger SET actif = false WHERE id = ?";
+        String sql = "UPDATE burger SET actif = false WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
@@ -61,7 +61,7 @@ public class BurgerRepository {
 
     public List<Burger> findAll() {
         List<Burger> burgers = new ArrayList<>();
-        String sql = "SELECT * FROM Burger WHERE actif = true";
+        String sql = "SELECT * FROM burger WHERE actif = true";
         try (Connection conn = DatabaseConnection.getConnection();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
@@ -77,7 +77,7 @@ public class BurgerRepository {
     }
 
     public Burger findById(int id) {
-        String sql = "SELECT * FROM Burger WHERE id = ?";
+        String sql = "SELECT * FROM burger WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);

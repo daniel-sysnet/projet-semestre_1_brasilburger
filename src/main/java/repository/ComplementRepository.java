@@ -7,11 +7,11 @@ import java.util.List;
 
 public class ComplementRepository {
     public void save(Complement complement) {
-        String sql = "INSERT INTO Complement (id, nom, prix, image, description, actif) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO complement (id, nom, prix, image, description, actif) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             // Calculer le prochain ID
-            String maxIdSql = "SELECT COALESCE(MAX(id), 0) + 1 FROM Complement";
+            String maxIdSql = "SELECT COALESCE(MAX(id), 0) + 1 FROM complement";
             try (PreparedStatement maxStmt = conn.prepareStatement(maxIdSql);
                     ResultSet rs = maxStmt.executeQuery()) {
                 int nextId = 1;
@@ -33,7 +33,7 @@ public class ComplementRepository {
     }
 
     public void update(Complement complement) {
-        String sql = "UPDATE Complement SET nom = ?, prix = ?, image = ?, description = ?, actif = ? WHERE id = ?";
+        String sql = "UPDATE complement SET nom = ?, prix = ?, image = ?, description = ?, actif = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, complement.getNom());
@@ -49,7 +49,7 @@ public class ComplementRepository {
     }
 
     public void archive(int id) {
-        String sql = "UPDATE Complement SET actif = false WHERE id = ?";
+        String sql = "UPDATE complement SET actif = false WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
@@ -61,7 +61,7 @@ public class ComplementRepository {
 
     public List<Complement> findAll() {
         List<Complement> complements = new ArrayList<>();
-        String sql = "SELECT * FROM Complement WHERE actif = true";
+        String sql = "SELECT * FROM complement WHERE actif = true";
         try (Connection conn = DatabaseConnection.getConnection();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
@@ -77,14 +77,14 @@ public class ComplementRepository {
     }
 
     public Complement findById(int id) {
-        String sql = "SELECT * FROM Complement WHERE id = ?";
+        String sql = "SELECT * FROM complement WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new Complement(rs.getInt("id"), rs.getString("nom"), rs.getDouble("prix"),
-                        rs.getString("image"), rs.getString("description"));
+                        rs.getString("image"), rs.getString("description"), rs.getBoolean("actif"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

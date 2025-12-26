@@ -20,22 +20,26 @@ public class DatabaseConnection {
             throw new SQLException("Driver PostgreSQL introuvable dans le classpath", e);
         }
 
+        return DriverManager.getConnection(URL, USER, PASSWORD);
+    }
+
     public static void initDatabase() {
         try (Connection conn = getConnection();
-             java.sql.Statement stmt = conn.createStatement()) {
+                java.sql.Statement stmt = conn.createStatement()) {
 
             // Ajouter la colonne 'actif' si elle n'existe pas
-            stmt.execute("ALTER TABLE Burger ADD COLUMN IF NOT EXISTS actif BOOLEAN DEFAULT true");
-            stmt.execute("ALTER TABLE Menu ADD COLUMN IF NOT EXISTS actif BOOLEAN DEFAULT true");
-            stmt.execute("ALTER TABLE Complement ADD COLUMN IF NOT EXISTS actif BOOLEAN DEFAULT true");
+            stmt.execute("ALTER TABLE burger ADD COLUMN IF NOT EXISTS actif BOOLEAN DEFAULT true");
+            stmt.execute("ALTER TABLE menu ADD COLUMN IF NOT EXISTS actif BOOLEAN DEFAULT true");
+            stmt.execute("ALTER TABLE complement ADD COLUMN IF NOT EXISTS actif BOOLEAN DEFAULT true");
 
             // Mettre à jour les enregistrements existants pour définir actif = true si NULL
-            stmt.execute("UPDATE Burger SET actif = true WHERE actif IS NULL");
-            stmt.execute("UPDATE Menu SET actif = true WHERE actif IS NULL");
-            stmt.execute("UPDATE Complement SET actif = true WHERE actif IS NULL");
+            stmt.execute("UPDATE burger SET actif = true WHERE actif IS NULL");
+            stmt.execute("UPDATE menu SET actif = true WHERE actif IS NULL");
+            stmt.execute("UPDATE complement SET actif = true WHERE actif IS NULL");
 
             System.out.println("Base de données initialisée avec succès.");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+}

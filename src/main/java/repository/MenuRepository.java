@@ -7,11 +7,11 @@ import java.util.List;
 
 public class MenuRepository {
     public void save(Menu menu) {
-        String sql = "INSERT INTO Menu (id, nom, prix, image, description, actif) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO menu (id, nom, prix, image, description, actif) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             // Calculer le prochain ID
-            String maxIdSql = "SELECT COALESCE(MAX(id), 0) + 1 FROM Menu";
+            String maxIdSql = "SELECT COALESCE(MAX(id), 0) + 1 FROM menu";
             try (PreparedStatement maxStmt = conn.prepareStatement(maxIdSql);
                     ResultSet rs = maxStmt.executeQuery()) {
                 int nextId = 1;
@@ -33,7 +33,7 @@ public class MenuRepository {
     }
 
     public void update(Menu menu) {
-        String sql = "UPDATE Menu SET nom = ?, prix = ?, image = ?, description = ?, actif = ? WHERE id = ?";
+        String sql = "UPDATE menu SET nom = ?, prix = ?, image = ?, description = ?, actif = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, menu.getNom());
@@ -49,7 +49,7 @@ public class MenuRepository {
     }
 
     public void archive(int id) {
-        String sql = "UPDATE Menu SET actif = false WHERE id = ?";
+        String sql = "UPDATE menu SET actif = false WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
@@ -61,13 +61,14 @@ public class MenuRepository {
 
     public List<Menu> findAll() {
         List<Menu> menus = new ArrayList<>();
-        String sql = "SELECT * FROM Menu WHERE actif = true";
+        String sql = "SELECT * FROM menu WHERE actif = true";
         try (Connection conn = DatabaseConnection.getConnection();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Menu menu = new Menu(rs.getInt("id"), rs.getString("nom"), rs.getDouble("prix"), rs.getString("image"),
                         rs.getString("description"), rs.getBoolean("actif"));
+                menus.add(menu);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -76,14 +77,14 @@ public class MenuRepository {
     }
 
     public Menu findById(int id) {
-        String sql = "SELECT * FROM Menu WHERE id = ?";
+        String sql = "SELECT * FROM menu WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new Menu(rs.getInt("id"), rs.getString("nom"), rs.getDouble("prix"), rs.getString("image"),
-                        rs.getString("description"));
+                        rs.getString("description"), rs.getBoolean("actif"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
