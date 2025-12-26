@@ -104,4 +104,52 @@ class CommandeRepository extends ServiceEntityRepository implements CommandeRepo
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Trouver les commandes avec filtres
+     */
+    public function findByFilters(array $filters): array
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->leftJoin('c.client', 'cl')
+            ->leftJoin('c.ligneCommandes', 'lc')
+            ->leftJoin('lc.burger', 'b')
+            ->leftJoin('lc.menu', 'm');
+
+        if (!empty($filters['etat'])) {
+            $qb->andWhere('c.etat = :etat')
+               ->setParameter('etat', $filters['etat']);
+        }
+
+        if (!empty($filters['date'])) {
+            $date = \DateTime::createFromFormat('Y-m-d', $filters['date']);
+            if ($date) {
+                $nextDay = clone $date;
+                $nextDay->modify('+1 day');
+                $qb->andWhere('c.dateCommande >= :date_start')
+                   ->andWhere('c.dateCommande < :date_end')
+                   ->setParameter('date_start', $date)
+                   ->setParameter('date_end', $nextDay);
+            }
+        }
+
+        if (!empty($filters['client'])) {
+            $qb->andWhere('cl.nom LIKE :client')
+               ->setParameter('client', '%' . $filters['client'] . '%');
+        }
+
+        if (!empty($filters['burger'])) {
+            $qb->andWhere('b.nom LIKE :burger')
+               ->setParameter('burger', '%' . $filters['burger'] . '%');
+        }
+
+        if (!empty($filters['menu'])) {
+            $qb->andWhere('m.nom LIKE :menu')
+               ->setParameter('menu', '%' . $filters['menu'] . '%');
+        }
+
+        return $qb->orderBy('c.dateCommande', 'DESC')
+                  ->getQuery()
+                  ->getResult();
+    }
 }

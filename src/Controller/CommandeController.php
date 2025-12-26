@@ -18,12 +18,21 @@ class CommandeController extends AbstractController
     public function __construct(private CommandeRepository $commandeRepository, private EntityManagerInterface $em) {}
 
     #[Route('/', name: 'commandes_index')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $commandes = $this->commandeRepository->findAll();
+        $filters = [
+            'etat' => $request->query->get('etat'),
+            'date' => $request->query->get('date'),
+            'client' => $request->query->get('client'),
+            'burger' => $request->query->get('burger'),
+            'menu' => $request->query->get('menu'),
+        ];
+
+        $commandes = $this->commandeRepository->findByFilters(array_filter($filters));
 
         return $this->render('commandes/index.html.twig', [
             'commandes' => $commandes,
+            'filters' => $filters,
         ]);
     }
 
