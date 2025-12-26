@@ -134,4 +134,21 @@ class Commande
 
         return $this;
     }
+
+    public function getTotal(): float
+    {
+        $total = 0.0;
+        foreach ($this->ligneCommandes as $ligne) {
+            $prix = 0.0;
+            if ($ligne->getBurger()) {
+                $prix = $ligne->getBurger()->getPrix();
+            } elseif ($ligne->getMenu()) {
+                $prix = $ligne->getMenu()->getPrix();
+            } elseif ($ligne->getComplement()) {
+                $prix = $ligne->getComplement()->getPrix();
+            }
+            $total += $prix * $ligne->getQuantite();
+        }
+        return $total;
+    }
 }

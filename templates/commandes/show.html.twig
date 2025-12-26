@@ -57,6 +57,11 @@
                 <p><strong>Type :</strong> {{ commande.type }}</p>
                 <p><strong>Zone :</strong> {{ commande.zone ? commande.zone.nom : 'Aucune' }}</p>
                 <p><strong>Livreur :</strong> {{ commande.livreur ? commande.livreur.nom ~ ' ' ~ commande.livreur.prenom : 'Aucun' }}</p>
+                {% if commande.paiement %}
+                    <p><strong>Paiement :</strong> {{ commande.paiement.montant|number_format(2, ',', ' ') }} FCFA via {{ commande.paiement.methode }} le {{ commande.paiement.datePaiement|date('d/m/Y H:i') }}</p>
+                {% else %}
+                    <p><strong>Paiement :</strong> Non payé</p>
+                {% endif %}
             </div>
 
             <div class="lignes">

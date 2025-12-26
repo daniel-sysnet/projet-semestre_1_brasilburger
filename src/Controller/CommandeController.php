@@ -77,4 +77,31 @@ class CommandeController extends AbstractController
 
         return $this->redirectToRoute('commandes_livraisons');
     }
+
+    #[Route('/{id}/payer', name: 'commandes_payer', methods: ['POST'])]
+    public function payer(Request $request, Commande $commande, EntityManagerInterface $em): Response
+    {
+        if ($commande->getPaiement()) {
+            $this->addFlash('error', 'Cette commande est déjà payée.');
+            return $this->redirectToRoute('commandes_index');
+        }
+
+        $methode = $request->request->get('methode');
+        if (!in_array($methode, ['Wave', 'Orange Money'])) {
+            $this->addFlash('error', 'Méthode de paiement invalide.');
+            return $this->redirectToRoute('commandes_index');
+        }
+
+        $paiement = new Paiement();
+        $paiement->setCommande($commande);
+        $paiement->setDatePaiement(new \DateTime());
+        $paiement->setMontant($commande->getTotal());
+        $paiement->setMethode($methode);
+
+        $em->persist($paiement);
+        $em->flush();
+
+        $this->addFlash('success', 'Paiement enregistré avec succès.');
+        return $this->redirectToRoute('commandes_index');
+    }
 }

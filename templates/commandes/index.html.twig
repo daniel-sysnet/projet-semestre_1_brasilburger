@@ -107,6 +107,16 @@
                                         <button type="submit" class="btn btn-success">Terminer</button>
                                     </form>
                                 {% endif %}
+                                {% if commande.etat == 'Validee' and not commande.paiement %}
+                                    <form method="post" action="{{ path('commandes_payer', {id: commande.id}) }}" style="display: inline;">
+                                        <select name="methode" required style="margin-right: 5px;">
+                                            <option value="">Méthode</option>
+                                            <option value="Wave">Wave</option>
+                                            <option value="Orange Money">Orange Money</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-primary">Payer</button>
+                                    </form>
+                                {% endif %}
                                 {% if commande.etat in ['En cours', 'Validee'] %}
                                     <form method="post" action="{{ path('commandes_annuler', {id: commande.id}) }}" style="display: inline;">
                                         <button type="submit" class="btn btn-danger">Annuler</button>
