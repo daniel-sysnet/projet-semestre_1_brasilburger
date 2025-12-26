@@ -30,6 +30,7 @@
         .btn-success { background-color: #28a745; color: white; }
         .btn-danger { background-color: #dc3545; color: white; }
         .btn-primary { background-color: #007bff; color: white; }
+        .btn-secondary { background-color: #6c757d; color: white; }
     </style>
 </head>
 <body>
@@ -50,6 +51,7 @@
             <a href="{{ path('app_statistics') }}">📈 Statistiques</a>
             <a href="{{ path('commandes_index') }}" class="active">📦 Commandes</a>
             <a href="{{ path('livreur_index') }}">🛵 Livreurs</a>
+            <a href="{{ path('zone_index') }}">🏙️ Zones</a>
             <a href="{{ path('commandes_livraisons') }}">🚚 Livraisons</a>
             <a href="{{ path('logout') }}" class="logout">🚪 Déconnexion</a>
         </nav>
@@ -71,6 +73,43 @@
             {% for message in app.flashes('success') %}
                 <p style="color: green;">{{ message }}</p>
             {% endfor %}
+
+            <!-- Filtres -->
+            <div style="margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+                <h3>Filtres</h3>
+                <form method="GET" action="{{ path('commandes_index') }}" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: end;">
+                    <div>
+                        <label for="etat">État :</label><br>
+                        <select name="etat" id="etat">
+                            <option value="">Tous</option>
+                            <option value="En attente" {{ filters.etat == 'En attente' ? 'selected' : '' }}>En attente</option>
+                            <option value="Validée" {{ filters.etat == 'Validée' ? 'selected' : '' }}>Validée</option>
+                            <option value="Terminée" {{ filters.etat == 'Terminée' ? 'selected' : '' }}>Terminée</option>
+                            <option value="Annulée" {{ filters.etat == 'Annulée' ? 'selected' : '' }}>Annulée</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="date">Date (YYYY-MM-DD) :</label><br>
+                        <input type="date" name="date" id="date" value="{{ filters.date }}">
+                    </div>
+                    <div>
+                        <label for="client">Client :</label><br>
+                        <input type="text" name="client" id="client" value="{{ filters.client }}" placeholder="Nom du client">
+                    </div>
+                    <div>
+                        <label for="burger">Burger :</label><br>
+                        <input type="text" name="burger" id="burger" value="{{ filters.burger }}" placeholder="Nom du burger">
+                    </div>
+                    <div>
+                        <label for="menu">Menu :</label><br>
+                        <input type="text" name="menu" id="menu" value="{{ filters.menu }}" placeholder="Nom du menu">
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary">Filtrer</button>
+                        <a href="{{ path('commandes_index') }}" class="btn btn-secondary" style="margin-left: 10px;">Réinitialiser</a>
+                    </div>
+                </form>
+            </div>
 
             <table class="commandes-table">
                 <thead>
