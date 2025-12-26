@@ -137,17 +137,12 @@
                             <td>{{ commande.livreur ? commande.livreur.nom ~ ' ' ~ commande.livreur.prenom : '-' }}</td>
                             <td>
                                 <a href="{{ path('commandes_show', {id: commande.id}) }}" class="btn btn-primary">Voir</a>
-                                {% if commande.etat == 'En cours' %}
+                                {% if commande.etat == 'En attente' %}
                                     <form method="post" action="{{ path('commandes_valider', {id: commande.id}) }}" style="display: inline;">
                                         <button type="submit" class="btn btn-success">Valider</button>
                                     </form>
                                 {% endif %}
-                                {% if commande.etat == 'Validee' %}
-                                    <form method="post" action="{{ path('commandes_terminer', {id: commande.id}) }}" style="display: inline;">
-                                        <button type="submit" class="btn btn-success">Terminer</button>
-                                    </form>
-                                {% endif %}
-                                {% if commande.etat == 'Validee' and not commande.paiement %}
+                                {% if commande.etat == 'Validée' and not commande.paiement %}
                                     <form method="post" action="{{ path('commandes_payer', {id: commande.id}) }}" style="display: inline;">
                                         <select name="methode" required style="margin-right: 5px;">
                                             <option value="">Méthode</option>
@@ -157,7 +152,7 @@
                                         <button type="submit" class="btn btn-primary">Payer</button>
                                     </form>
                                 {% endif %}
-                                {% if commande.etat in ['En cours', 'Validee'] %}
+                                {% if commande.etat in ['En attente', 'Validée'] %}
                                     <form method="post" action="{{ path('commandes_annuler', {id: commande.id}) }}" style="display: inline;">
                                         <button type="submit" class="btn btn-danger">Annuler</button>
                                     </form>

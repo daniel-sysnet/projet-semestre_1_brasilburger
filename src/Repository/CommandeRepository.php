@@ -94,10 +94,10 @@ class CommandeRepository extends ServiceEntityRepository implements CommandeRepo
     public function findCommandesALivrerParZone(): array
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.etat = :etat')
+            ->andWhere('c.etat IN (:etats)')
             ->andWhere('c.type = :type')
             ->andWhere('c.livreur IS NULL')  // Non encore assignées
-            ->setParameter('etat', 'Terminée')
+            ->setParameter('etats', ['Validée', 'Terminée'])
             ->setParameter('type', 'À livrer')
             ->orderBy('c.zone', 'ASC')
             ->addOrderBy('c.dateCommande', 'ASC')

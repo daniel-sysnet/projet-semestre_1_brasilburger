@@ -95,6 +95,11 @@ class CommandeController extends AbstractController
             return $this->redirectToRoute('commandes_index');
         }
 
+        if ($commande->getEtat() !== 'Validée') {
+            $this->addFlash('error', 'Seules les commandes validées peuvent être payées.');
+            return $this->redirectToRoute('commandes_index');
+        }
+
         $methode = $request->request->get('methode');
         if (!in_array($methode, ['Wave', 'Orange Money'])) {
             $this->addFlash('error', 'Méthode de paiement invalide.');
@@ -107,10 +112,42 @@ class CommandeController extends AbstractController
         $paiement->setMontant($commande->getTotal());
         $paiement->setMethode($methode);
 
+        $commande->setEtat('Terminée');  // Une fois payée, passe à Terminée
+
         $em->persist($paiement);
         $em->flush();
 
         $this->addFlash('success', 'Paiement enregistré avec succès.');
+        return $this->redirectToRoute('commandes_index');
+    }
+
+    #[Route('/{id}/valider', name: 'commandes_valider', methods: ['POST'])]
+    public function valider(Commande $commande, EntityManagerInterface $em): Response
+    {
+        if ($commande->getEtat() !== 'En attente') {
+            $this->addFlash('error', 'Seules les commandes en attente peuvent être validées.');
+            return $this->redirectToRoute('commandes_index');
+        }
+
+        $commande->setEtat('Validée');
+        $em->flush();
+
+        $this->addFlash('success', 'Commande validée avec succès.');
+        return $this->redirectToRoute('commandes_index');
+    }
+
+    #[Route('/{id}/annuler', name: 'commandes_annuler', methods: ['POST'])]
+    public function annuler(Commande $commande, EntityManagerInterface $em): Response
+    {
+        if (in_array($commande->getEtat(), ['Terminée', 'Annulée'])) {
+            $this->addFlash('error', 'Cette commande ne peut pas être annulée.');
+            return $this->redirectToRoute('commandes_index');
+        }
+
+        $commande->setEtat('Annulée');
+        $em->flush();
+
+        $this->addFlash('success', 'Commande annulée avec succès.');
         return $this->redirectToRoute('commandes_index');
     }
 }
