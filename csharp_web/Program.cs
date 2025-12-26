@@ -62,19 +62,19 @@ builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
 // ===== MIGRATIONS AUTOMATIQUES =====
-try
-{
-    using (var scope = app.Services.CreateScope())
-    {
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        context.Database.Migrate();
-    }
-}
-catch (Exception ex)
-{
-    // Journaliser l'erreur mais ne pas crasher
-    Console.WriteLine("Erreur lors de la migration automatique : " + ex.Message);
-}
+// try
+// {
+//     using (var scope = app.Services.CreateScope())
+//     {
+//         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+//         context.Database.Migrate();
+//     }
+// }
+// catch (Exception ex)
+// {
+//     // Journaliser l'erreur mais ne pas crasher
+//     Console.WriteLine("Erreur lors de la migration automatique : " + ex.Message);
+// }
 
 // ===== PIPELINE HTTP =====
 if (!app.Environment.IsDevelopment())
@@ -90,6 +90,39 @@ app.UseRouting();
 
 app.UseSession();
 app.UseAuthorization();
+
+// ===== RESET SEQUENCES =====
+try
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await context.Database.ExecuteSqlRawAsync("SELECT setval('client_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM client));");
+        await context.Database.ExecuteSqlRawAsync("SELECT setval('burger_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM burger));");
+        await context.Database.ExecuteSqlRawAsync("SELECT setval('complement_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM complement));");
+        await context.Database.ExecuteSqlRawAsync("SELECT setval('menu_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM menu));");
+        await context.Database.ExecuteSqlRawAsync("SELECT setval('zone_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM zone));");
+        await context.Database.ExecuteSqlRawAsync("SELECT setval('livreur_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM livreur));");
+        await context.Database.ExecuteSqlRawAsync("SELECT setval('gestionnaire_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM gestionnaire));");
+        await context.Database.ExecuteSqlRawAsync("SELECT setval('paiement_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM paiement));");
+        await context.Database.ExecuteSqlRawAsync("SELECT setval('commande_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM commande));");
+        await context.Database.ExecuteSqlRawAsync("SELECT setval('ligne_commande_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM ligne_commande));");
+
+        // Ajouter la colonne paiement_id si elle n'existe pas
+        await context.Database.ExecuteSqlRawAsync(@"
+            DO $$
+            BEGIN
+                IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'commande' AND column_name = 'paiement_id') THEN
+                    ALTER TABLE commande ADD COLUMN paiement_id INT;
+                END IF;
+            END $$;
+        ");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine("Erreur lors du reset des séquences ou ajout de colonne : " + ex.Message);
+}
 
 app.MapControllerRoute(
     name: "default",

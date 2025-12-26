@@ -54,7 +54,7 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult AddToCart(TypeProduit type, int id, string nom, decimal prix, string image)
+    public IActionResult AddToCart(TypeProduit type, int id, string nom, double prix, string image)
     {
         _panierService.AddToCart(type, id, nom, prix, image);
         return Json(new { success = true, itemCount = _panierService.GetCartItemCount() });
