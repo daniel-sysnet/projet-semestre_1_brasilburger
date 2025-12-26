@@ -30,8 +30,10 @@
 
         <nav class="menu">
             <a href="{{ path('dashboard') }}">📊 Tableau de Bord</a>
+            <a href="{{ path('app_statistics') }}">📈 Statistiques</a>
             <a href="{{ path('commandes_index') }}" class="active">📦 Commandes</a>
-            <a href="#">🛵 Livraison</a>
+            <a href="{{ path('livreur_index') }}">🛵 Livreurs</a>
+            <a href="{{ path('commandes_livraisons') }}">🚚 Livraisons</a>
             <a href="{{ path('logout') }}" class="logout">🚪 Déconnexion</a>
         </nav>
     </aside>
@@ -58,27 +60,44 @@
             </div>
 
             <div class="lignes">
-                <h2>Lignes de commande</h2>
+                <h2>Détails des produits commandés</h2>
                 <table>
                     <thead>
                         <tr>
                             <th>Type</th>
                             <th>Nom</th>
                             <th>Quantité</th>
+                            <th>Prix unitaire (FCFA)</th>
+                            <th>Total (FCFA)</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {% set totalCommande = 0 %}
                         {% for ligne in commande.ligneCommandes %}
                             <tr>
                                 <td>
-                                    {% if ligne.burger %}Burger{% elseif ligne.menu %}Menu{% elseif ligne.complement %}Complément{% endif %}
+                                    {% if ligne.burger %}🍔 Burger{% elseif ligne.menu %}🍟 Menu{% elseif ligne.complement %}🥤 Complément{% endif %}
                                 </td>
                                 <td>
                                     {% if ligne.burger %}{{ ligne.burger.nom }}{% elseif ligne.menu %}{{ ligne.menu.nom }}{% elseif ligne.complement %}{{ ligne.complement.nom }}{% endif %}
                                 </td>
                                 <td>{{ ligne.quantite }}</td>
+                                <td>
+                                    {% if ligne.burger %}{{ ligne.burger.prix|number_format(2, ',', ' ') }}{% elseif ligne.menu %}{{ ligne.menu.prix|number_format(2, ',', ' ') }}{% elseif ligne.complement %}{{ ligne.complement.prix|number_format(2, ',', ' ') }}{% endif %}
+                                </td>
+                                <td>
+                                    {% set prixUnitaire = 0 %}
+                                    {% if ligne.burger %}{% set prixUnitaire = ligne.burger.prix %}{% elseif ligne.menu %}{% set prixUnitaire = ligne.menu.prix %}{% elseif ligne.complement %}{% set prixUnitaire = ligne.complement.prix %}{% endif %}
+                                    {% set totalLigne = prixUnitaire * ligne.quantite %}
+                                    {{ totalLigne|number_format(2, ',', ' ') }}
+                                    {% set totalCommande = totalCommande + totalLigne %}
+                                </td>
                             </tr>
                         {% endfor %}
+                        <tr style="font-weight: bold; background-color: #f4a62a; color: white;">
+                            <td colspan="4">Total de la commande</td>
+                            <td>{{ totalCommande|number_format(2, ',', ' ') }} FCFA</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

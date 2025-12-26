@@ -24,6 +24,9 @@ class Menu
     private ?string $image = null;
 
     #[ORM\Column]
+    private float $prix;
+
+    #[ORM\Column]
     private bool $actif = true;
 
     public function getId(): ?int { return $this->id; }
@@ -60,6 +63,18 @@ class Menu
     public function setImage(?string $image): static
     {
         $this->image = $image;
+
+        return $this;
+    }
+
+    public function getPrix(): ?float
+    {
+        return $this->prix;
+    }
+
+    public function setPrix(float $prix): static
+    {
+        $this->prix = $prix;
 
         return $this;
     }
