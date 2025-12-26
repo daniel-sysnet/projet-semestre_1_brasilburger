@@ -13,7 +13,7 @@ class Paiement
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne]
+    #[ORM\OneToOne(inversedBy: 'paiement')]
     #[ORM\JoinColumn(nullable: false, unique: true)]
     private Commande $commande;
 
