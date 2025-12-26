@@ -1,4 +1,4 @@
-package service;
+package Service;
 
 import entity.Menu;
 import repository.MenuRepository;
