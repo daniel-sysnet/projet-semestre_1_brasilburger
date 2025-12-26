@@ -24,6 +24,9 @@ final class StatistiquesController extends AbstractController
         $commandesParEtat = $this->statistiquesRepository->getCommandesParEtat();
         $revenusAujourdhui = $this->statistiquesRepository->getRevenusParJour(new \DateTime());
         $topProduits = $this->statistiquesRepository->getTopProduits();
+        $commandesEnCoursDuJour = $this->statistiquesRepository->getCommandesEnCoursDuJour();
+        $commandesValideesDuJour = $this->statistiquesRepository->getCommandesValideesDuJour();
+        $commandesAnnuleesDuJour = $this->statistiquesRepository->getCommandesAnnuleesDuJour();
 
         return $this->render('statistiques/index.html.twig', [
             'nombreTotalCommandes' => $nombreTotalCommandes,
@@ -31,6 +34,9 @@ final class StatistiquesController extends AbstractController
             'commandesParEtat' => $commandesParEtat,
             'revenusAujourdhui' => $revenusAujourdhui,
             'topProduits' => $topProduits,
+            'commandesEnCoursDuJour' => $commandesEnCoursDuJour,
+            'commandesValideesDuJour' => $commandesValideesDuJour,
+            'commandesAnnuleesDuJour' => $commandesAnnuleesDuJour,
         ]);
     }
 }

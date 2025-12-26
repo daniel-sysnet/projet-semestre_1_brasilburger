@@ -71,28 +71,39 @@ class StatistiquesRepository implements StatistiquesRepositoryInterface
 
     public function getTopProduits(): array
     {
-        // Top burgers
+        $today = new \DateTime('today');
+        $tomorrow = new \DateTime('tomorrow');
+
+        // Top burgers du jour
         $qbBurgers = $this->entityManager->createQueryBuilder();
         $qbBurgers->select('b.nom, SUM(lc.quantite) as total')
             ->from('App\Entity\LigneCommande', 'lc')
             ->join('lc.burger', 'b')
             ->join('lc.commande', 'c')
             ->where('c.etat = :etat')
+            ->andWhere('c.dateCommande >= :today')
+            ->andWhere('c.dateCommande < :tomorrow')
             ->setParameter('etat', 'validee')
+            ->setParameter('today', $today)
+            ->setParameter('tomorrow', $tomorrow)
             ->groupBy('b.id')
             ->orderBy('total', 'DESC')
             ->setMaxResults(5);
 
         $burgers = $qbBurgers->getQuery()->getResult();
 
-        // Top menus
+        // Top menus du jour
         $qbMenus = $this->entityManager->createQueryBuilder();
         $qbMenus->select('m.nom, SUM(lc.quantite) as total')
             ->from('App\Entity\LigneCommande', 'lc')
             ->join('lc.menu', 'm')
             ->join('lc.commande', 'c')
             ->where('c.etat = :etat')
+            ->andWhere('c.dateCommande >= :today')
+            ->andWhere('c.dateCommande < :tomorrow')
             ->setParameter('etat', 'validee')
+            ->setParameter('today', $today)
+            ->setParameter('tomorrow', $tomorrow)
             ->groupBy('m.id')
             ->orderBy('total', 'DESC')
             ->setMaxResults(5);
@@ -103,5 +114,59 @@ class StatistiquesRepository implements StatistiquesRepositoryInterface
             'burgers' => $burgers,
             'menus' => $menus,
         ];
+    }
+
+    public function getCommandesEnCoursDuJour(): int
+    {
+        $today = new \DateTime('today');
+        $tomorrow = new \DateTime('tomorrow');
+
+        return $this->entityManager->createQueryBuilder()
+            ->select('COUNT(c.id)')
+            ->from('App\Entity\Commande', 'c')
+            ->andWhere('c.etat = :etat')
+            ->andWhere('c.dateCommande >= :today')
+            ->andWhere('c.dateCommande < :tomorrow')
+            ->setParameter('etat', 'En cours')
+            ->setParameter('today', $today)
+            ->setParameter('tomorrow', $tomorrow)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function getCommandesValideesDuJour(): int
+    {
+        $today = new \DateTime('today');
+        $tomorrow = new \DateTime('tomorrow');
+
+        return $this->entityManager->createQueryBuilder()
+            ->select('COUNT(c.id)')
+            ->from('App\Entity\Commande', 'c')
+            ->andWhere('c.etat = :etat')
+            ->andWhere('c.dateCommande >= :today')
+            ->andWhere('c.dateCommande < :tomorrow')
+            ->setParameter('etat', 'Validee')
+            ->setParameter('today', $today)
+            ->setParameter('tomorrow', $tomorrow)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function getCommandesAnnuleesDuJour(): int
+    {
+        $today = new \DateTime('today');
+        $tomorrow = new \DateTime('tomorrow');
+
+        return $this->entityManager->createQueryBuilder()
+            ->select('COUNT(c.id)')
+            ->from('App\Entity\Commande', 'c')
+            ->andWhere('c.etat = :etat')
+            ->andWhere('c.dateCommande >= :today')
+            ->andWhere('c.dateCommande < :tomorrow')
+            ->setParameter('etat', 'Annulee')
+            ->setParameter('today', $today)
+            ->setParameter('tomorrow', $tomorrow)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }
