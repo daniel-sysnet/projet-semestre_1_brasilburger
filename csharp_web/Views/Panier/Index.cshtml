@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "Mon Panier";
     var total = ViewBag.Total ?? 0;
+    var itemsTotal = ViewBag.ItemsTotal ?? 0;
+    var deliveryPrice = ViewBag.DeliveryPrice ?? 0;
     var modeConsommation = ViewBag.ModeConsommation ?? "Sur place";
     var methodePaiement = ViewBag.MethodePaiement ?? MethodePaiement.Wave;
     var clientId = Context.Session.GetInt32("ClientId");
@@ -132,13 +134,17 @@
                     <div class="section-card">
                         <h3 class="section-title">Zone de livraison</h3>
                         <form method="post" action="@Url.Action("SetZoneLivraison", "Panier")">
-                            <select name="zoneId" class="zone-select" required>
+                            <select name="zoneId" id="zoneSelect" class="zone-select" required>
                                 <option value="">Sélectionnez une zone</option>
                                 @foreach (var zone in ViewBag.Zones as IEnumerable<csharp_web.Models.Zone> ?? new List<csharp_web.Models.Zone>())
                                 {
-                                    <option value="@zone.Id">@zone.Nom</option>
+                                    <option value="@zone.Id" data-prix="@zone.Prix" selected="@(ViewBag.SelectedZoneId == zone.Id)">@zone.Nom</option>
                                 }
                             </select>
+                            <div class="zone-price-display" id="zonePriceDisplay" style="display: none;">
+                                <span class="zone-price-label">Prix de livraison :</span>
+                                <span class="zone-price-amount" id="zonePriceAmount"></span>
+                            </div>
                             <button type="submit" class="zone-submit-btn">Confirmer la zone</button>
                         </form>
                     </div>
@@ -146,9 +152,22 @@
 
                 <!-- Total -->
                 <div class="section-card">
-                    <div class="total-row">
-                        <span class="total-label">Total :</span>
-                        <span class="total-amount">@total.ToString("N0") FCFA</span>
+                    <div class="total-breakdown">
+                        <div class="total-row">
+                            <span class="total-label">Sous-total :</span>
+                            <span class="total-amount">@((int)itemsTotal) FCFA</span>
+                        </div>
+                        @if (modeConsommation == "Livraison")
+                        {
+                            <div class="total-row">
+                                <span class="total-label">Livraison :</span>
+                                <span class="total-amount" id="deliveryAmount">@((int)deliveryPrice) FCFA</span>
+                            </div>
+                        }
+                        <div class="total-row total-final">
+                            <span class="total-label">Total :</span>
+                            <span class="total-amount" id="totalAmount">@((int)total) FCFA</span>
+                        </div>
                     </div>
                 </div>
 
@@ -193,5 +212,37 @@
             </a>
         </nav>
     </div>
+
+    <script>
+        const itemsTotal = @((int)itemsTotal);
+        document.addEventListener('DOMContentLoaded', function() {
+            const select = document.getElementById('zoneSelect');
+            if (select.value) {
+                select.dispatchEvent(new Event('change'));
+            }
+        });
+        document.getElementById('zoneSelect').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const prix = parseFloat(selectedOption.getAttribute('data-prix')) || 0;
+            const display = document.getElementById('zonePriceDisplay');
+            const amount = document.getElementById('zonePriceAmount');
+            const deliveryAmount = document.getElementById('deliveryAmount');
+            const totalAmount = document.getElementById('totalAmount');
+            if (prix > 0) {
+                amount.textContent = prix + ' FCFA';
+                display.style.display = 'block';
+                if (deliveryAmount) {
+                    deliveryAmount.textContent = prix + ' FCFA';
+                    totalAmount.textContent = (itemsTotal + prix) + ' FCFA';
+                }
+            } else {
+                display.style.display = 'none';
+                if (deliveryAmount) {
+                    deliveryAmount.textContent = '0 FCFA';
+                    totalAmount.textContent = itemsTotal + ' FCFA';
+                }
+            }
+        });
+    </script>
 </body>
 </html>
