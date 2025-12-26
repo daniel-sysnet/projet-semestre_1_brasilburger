@@ -1,6 +1,6 @@
 package views;
 
-import service.*;
+import Service.*;
 import entity.*;
 import java.util.Scanner;
 import java.util.List;
@@ -35,15 +35,19 @@ public class MenuPrincipal {
             switch (choix) {
                 case 1:
                     ajouterBurger();
+                    System.out.println();
                     break;
                 case 2:
                     modifierBurger();
+                    System.out.println();
                     break;
                 case 3:
                     archiverBurger();
+                    System.out.println();
                     break;
                 case 4:
                     listerBurgers();
+                    System.out.println();
                     break;
                 case 5:
                     return;
@@ -84,7 +88,7 @@ public class MenuPrincipal {
             System.out.print("Nouvelle description : ");
             burger.setDescription(scanner.nextLine());
             burgerService.modifierBurger(burger);
-            System.out.println("Burger modifié : " + burger);
+            System.out.println("Burger modifié avec succès.");
         } else {
             System.out.println("Burger non trouvé.");
         }
@@ -139,7 +143,7 @@ public class MenuPrincipal {
             System.out.print("Nouvelle description : ");
             complement.setDescription(scanner.nextLine());
             complementService.modifierComplement(complement);
-            System.out.println("Complément modifié : " + complement);
+            System.out.println("Complément modifié avec succès.");
         } else {
             System.out.println("Complément non trouvé.");
         }
@@ -232,7 +236,7 @@ public class MenuPrincipal {
             menu.setDescription(scanner.nextLine());
             // Recalculer le prix si nécessaire, mais pour simplifier, on garde le même
             menuService.modifierMenu(menu);
-            System.out.println("Menu modifié : " + menu);
+            System.out.println("Menu modifié avec succès.");
         } else {
             System.out.println("Menu non trouvé.");
         }
@@ -271,15 +275,19 @@ public class MenuPrincipal {
             switch (choix) {
                 case 1:
                     ajouterMenu();
+                    System.out.println();
                     break;
                 case 2:
                     modifierMenu();
+                    System.out.println();
                     break;
                 case 3:
                     archiverMenu();
+                    System.out.println();
                     break;
                 case 4:
                     listerMenus();
+                    System.out.println();
                     break;
                 case 5:
                     return;
@@ -304,15 +312,19 @@ public class MenuPrincipal {
             switch (choix) {
                 case 1:
                     ajouterComplement();
+                    System.out.println();
                     break;
                 case 2:
                     modifierComplement();
+                    System.out.println();
                     break;
                 case 3:
                     archiverComplement();
+                    System.out.println();
                     break;
                 case 4:
                     listerComplements();
+                    System.out.println();
                     break;
                 case 5:
                     return;
@@ -329,12 +341,15 @@ public class MenuPrincipal {
             switch (choix) {
                 case 1:
                     gererBurgers();
+                    System.out.println();
                     break;
                 case 2:
                     gererMenus();
+                    System.out.println();
                     break;
                 case 3:
                     gererComplements();
+                    System.out.println();
                     break;
                 case 4:
                     System.out.println("Au revoir!");
