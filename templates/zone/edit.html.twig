@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Modifier Zone | Brasil Burger</title>
+    <link rel="stylesheet" href="{{ asset('style.css') }}">
+</head>
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="logo"></div>
+            <span><strong>Brasil</strong> Burger</span>
+        </div>
+
+        <p class="section-title">Espace Gestionnaire</p>
+
+        <nav class="menu">
+            <a href="{{ path('dashboard') }}">📊 Tableau de Bord</a>
+            <a href="{{ path('app_statistics') }}">📈 Statistiques</a>
+            <a href="{{ path('commandes_index') }}">📦 Commandes</a>
+            <a href="{{ path('livreur_index') }}">🛵 Livreurs</a>
+            <a href="{{ path('zone_index') }}" class="active">🏙️ Zones</a>
+            <a href="{{ path('commandes_livraisons') }}">🚚 Livraisons</a>
+            <a href="{{ path('logout') }}" class="logout">🚪 Déconnexion</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <span class="role gestionnaire">Gestionnaire Web</span>
+            <span class="role client">Client</span>
+        </header>
+
+        <!-- CONTENT -->
+        <section class="content">
+            <h1>Modifier la Zone</h1>
+
+            {{ form_start(form) }}
+                {{ form_widget(form) }}
+                <button class="btn">Modifier</button>
+            {{ form_end(form) }}
+
+            <a href="{{ path('zone_index') }}" class="btn btn-primary">Retour à la liste</a>
+        </section>
+    </main>
+</div>

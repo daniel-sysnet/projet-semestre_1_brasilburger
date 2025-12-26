@@ -27,3 +27,6 @@ services:
 
     App\Repository\LivreurRepositoryInterface:
         class: App\Repository\LivreurRepository
+
+    App\Repository\ZoneRepositoryInterface:
+        class: App\Repository\ZoneRepository

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Zones | Brasil Burger</title>
+    <link rel="stylesheet" href="{{ asset('style.css') }}">
+    <style>
+        .zones-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .zones-table th, .zones-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .zones-table th {
+            background-color: #f4a62a;
+            color: white;
+        }
+        .btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-danger { background-color: #dc3545; color: white; }
+        .btn-primary { background-color: #007bff; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="logo"></div>
+            <span><strong>Brasil</strong> Burger</span>
+        </div>
+
+        <p class="section-title">Espace Gestionnaire</p>
+
+        <nav class="menu">
+            <a href="{{ path('dashboard') }}">📊 Tableau de Bord</a>
+            <a href="{{ path('app_statistics') }}">📈 Statistiques</a>
+            <a href="{{ path('commandes_index') }}">📦 Commandes</a>
+            <a href="{{ path('livreur_index') }}">🛵 Livreurs</a>
+            <a href="{{ path('zone_index') }}" class="active">🏙️ Zones</a>
+            <a href="{{ path('commandes_livraisons') }}">🚚 Livraisons</a>
+            <a href="{{ path('logout') }}" class="logout">🚪 Déconnexion</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <span class="role gestionnaire">Gestionnaire Web</span>
+            <span class="role client">Client</span>
+        </header>
+
+        <!-- CONTENT -->
+        <section class="content">
+            <h1>Gestion des Zones</h1>
+            <p class="subtitle">Liste de toutes les zones de livraison</p>
+
+            <a href="{{ path('zone_new') }}" class="btn btn-primary">Ajouter une Zone</a>
+
+            <table class="zones-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Prix de Livraison</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for zone in zones %}
+                        <tr>
+                            <td>{{ zone.id }}</td>
+                            <td>{{ zone.nom }}</td>
+                            <td>{{ zone.prix }} FCFA</td>
+                            <td>
+                                <a href="{{ path('zone_show', {'id': zone.id}) }}" class="btn btn-success">Voir</a>
+                                <a href="{{ path('zone_edit', {'id': zone.id}) }}" class="btn btn-primary">Modifier</a>
+                                <form method="post" action="{{ path('zone_delete', {'id': zone.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette zone ?');" style="display: inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ zone.id) }}">
+                                    <button class="btn btn-danger">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4">Aucune zone trouvée.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+</div>
+
+</body>
+</html>

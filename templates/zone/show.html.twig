@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Détails Zone | Brasil Burger</title>
+    <link rel="stylesheet" href="{{ asset('style.css') }}">
+</head>
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="logo"></div>
+            <span><strong>Brasil</strong> Burger</span>
+        </div>
+
+        <p class="section-title">Espace Gestionnaire</p>
+
+        <nav class="menu">
+            <a href="{{ path('dashboard') }}">📊 Tableau de Bord</a>
+            <a href="{{ path('app_statistics') }}">📈 Statistiques</a>
+            <a href="{{ path('commandes_index') }}">📦 Commandes</a>
+            <a href="{{ path('livreur_index') }}">🛵 Livreurs</a>
+            <a href="{{ path('zone_index') }}" class="active">🏙️ Zones</a>
+            <a href="{{ path('commandes_livraisons') }}">🚚 Livraisons</a>
+            <a href="{{ path('logout') }}" class="logout">🚪 Déconnexion</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <span class="role gestionnaire">Gestionnaire Web</span>
+            <span class="role client">Client</span>
+        </header>
+
+        <!-- CONTENT -->
+        <section class="content">
+            <h1>Détails de la Zone</h1>
+
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th>ID</th>
+                        <td>{{ zone.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nom</th>
+                        <td>{{ zone.nom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Prix de Livraison</th>
+                        <td>{{ zone.prix }} FCFA</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <a href="{{ path('zone_index') }}" class="btn btn-primary">Retour à la liste</a>
+            <a href="{{ path('zone_edit', {'id': zone.id}) }}" class="btn btn-primary">Modifier</a>
+        </section>
+    </main>
+</div>
+
+</body>
+</html>
