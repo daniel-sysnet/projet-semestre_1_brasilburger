@@ -32,10 +32,11 @@ namespace csharp_web.Models
         public EtatCommande Etat { get; set; } = EtatCommande.EnCours;
 
         [Required]
+        [Column("date_commande")]
         public DateTime Date { get; set; }
 
-        [Required]
-        public decimal Total { get; set; }
+        [NotMapped]
+        public double Total { get; set; }
 
         [Required]
         public TypeCommande Type { get; set; }
