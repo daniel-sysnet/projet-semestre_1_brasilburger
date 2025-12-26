@@ -30,3 +30,6 @@ services:
 
     App\Repository\ZoneRepositoryInterface:
         class: App\Repository\ZoneRepository
+
+    App\Repository\ClientRepositoryInterface:
+        class: App\Repository\ClientRepository
