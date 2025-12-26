@@ -149,6 +149,10 @@ class Commande
             }
             $total += $prix * $ligne->getQuantite();
         }
+        // Ajouter frais de livraison si à livrer
+        if ($this->type === 'À livrer' && $this->zone) {
+            $total += $this->zone->getPrix();
+        }
         return $total;
     }
 }
