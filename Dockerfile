@@ -23,6 +23,9 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts
 # Créer le répertoire var et permissions
 RUN mkdir -p var && chown -R www-data:www-data var
 
+# Rendre le script de démarrage exécutable
+RUN chmod +x start.sh
+
 # Configurer Apache pour Symfony
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 RUN a2enmod rewrite
@@ -44,4 +47,4 @@ ENV APP_ENV=prod
 ENV APP_DEBUG=false
 
 # Commande de démarrage
-CMD ["apache2-foreground"]
+CMD ["./start.sh"]
