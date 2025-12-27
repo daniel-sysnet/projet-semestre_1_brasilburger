@@ -31,6 +31,11 @@
         .zone-section {
             margin-bottom: 40px;
         }
+        .filtered-zone {
+            border: 2px solid #f4a62a;
+            padding: 10px;
+            border-radius: 5px;
+        }
         .zone-title {
             font-size: 1.5em;
             margin-bottom: 10px;
@@ -74,11 +79,32 @@
         <!-- CONTENT -->
         <section class="content">
             <h1>Gestion des Livraisons</h1>
-            <p class="subtitle">Commandes terminées à livrer, groupées par zone</p>
+            <p class="subtitle">Commandes validées à livrer, groupées par zone</p>
 
+            <!-- Filtre par zone -->
+            <div style="margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+                <form method="GET" action="{{ path('commandes_livraisons') }}" style="display: flex; gap: 10px; align-items: end;">
+                    <div>
+                        <label for="zone">Trier par Zone :</label><br>
+                        <select name="zone" id="zone">
+                            <option value="">Toutes les zones</option>
+                            {% for zone in zones %}
+                                <option value="{{ zone.nom }}" {{ zoneFilter == zone.nom ? 'selected' : '' }}>{{ zone.nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary">Filtrer</button>
+                        <a href="{{ path('commandes_livraisons') }}" class="btn btn-secondary">Toutes</a>
+                    </div>
+                </form>
+            </div>
+
+            {% if zoneFilter %}
             {% for zone, commandes in commandesParZone %}
-                <div class="zone-section">
-                    <h2 class="zone-title">Zone : {{ zone }}</h2>
+                {% if zone == zoneFilter %}
+                <div class="zone-section filtered-zone">
+                    <h2 class="zone-title">Zone : {{ zone }} (Filtré)</h2>
                     <table class="livraisons-table">
                         <thead>
                             <tr>
@@ -115,7 +141,11 @@
                         </tbody>
                     </table>
                 </div>
+                {% endif %}
             {% endfor %}
+            {% else %}
+                <p>Sélectionnez une zone pour afficher les livraisons.</p>
+            {% endif %}
         </section>
     </main>
 </div>

@@ -37,27 +37,43 @@ class CommandeController extends AbstractController
     }
 
     #[Route('/livraisons', name: 'commandes_livraisons')]
-    public function livraisons(EntityManagerInterface $em): Response
+    public function livraisons(Request $request, EntityManagerInterface $em): Response
     {
+        $zoneFilter = $request->query->get('zone');
+
         $commandes = $this->commandeRepository->findCommandesALivrerParZone();
+
+        // Récupérer les zones
+        $zones = $em->getRepository(Zone::class)->findAll();
 
         // Grouper par zone
         $commandesParZone = [];
-        $livreursParZone = [];
-        foreach ($commandes as $commande) {
-            $zoneNom = $commande->getZone() ? $commande->getZone()->getNom() : 'Sans zone';
-            $commandesParZone[$zoneNom][] = $commande;
+        if ($zoneFilter) {
+            foreach ($commandes as $commande) {
+                $zoneNom = $commande->getZone() ? $commande->getZone()->getNom() : 'Sans zone';
+                if ($zoneNom === $zoneFilter) {
+                    $commandesParZone[$zoneFilter][] = $commande;
+                }
+            }
+            if (!isset($commandesParZone[$zoneFilter])) {
+                $commandesParZone[$zoneFilter] = [];
+            }
         }
 
         // Récupérer les livreurs par zone
-        $zones = $em->getRepository(Zone::class)->findAll();
-        foreach ($zones as $zone) {
-            $livreursParZone[$zone->getNom()] = $em->getRepository(Livreur::class)->findBy(['zone' => $zone]);
+        $livreursParZone = [];
+        if ($zoneFilter) {
+            $zoneEntity = $em->getRepository(Zone::class)->findOneBy(['nom' => $zoneFilter]);
+            if ($zoneEntity) {
+                $livreursParZone[$zoneFilter] = $em->getRepository(Livreur::class)->findBy(['zone' => $zoneEntity]);
+            }
         }
 
         return $this->render('commandes/livraisons.html.twig', [
             'commandesParZone' => $commandesParZone,
             'livreursParZone' => $livreursParZone,
+            'zones' => $zones,
+            'zoneFilter' => $zoneFilter,
         ]);
     }
 
@@ -77,6 +93,7 @@ class CommandeController extends AbstractController
             $livreur = $em->getRepository(Livreur::class)->find($livreurId);
             if ($livreur && $commande->getZone() === $livreur->getZone()) {
                 $commande->setLivreur($livreur);
+                $commande->setEtat('Terminee');
                 $em->flush();
                 $this->addFlash('success', 'Livreur assigné à la commande.');
             } else {
@@ -95,7 +112,7 @@ class CommandeController extends AbstractController
             return $this->redirectToRoute('commandes_index');
         }
 
-        if ($commande->getEtat() !== 'Validée') {
+        if ($commande->getEtat() !== 'Validee') {
             $this->addFlash('error', 'Seules les commandes validées peuvent être payées.');
             return $this->redirectToRoute('commandes_index');
         }
@@ -112,7 +129,7 @@ class CommandeController extends AbstractController
         $paiement->setMontant($commande->getTotal());
         $paiement->setMethode($methode);
 
-        $commande->setEtat('Terminée');  // Une fois payée, passe à Terminée
+        $commande->setEtat('Terminee');  // Une fois payée, passe à Terminée
 
         $em->persist($paiement);
         $em->flush();
@@ -124,12 +141,12 @@ class CommandeController extends AbstractController
     #[Route('/{id}/valider', name: 'commandes_valider', methods: ['POST'])]
     public function valider(Commande $commande, EntityManagerInterface $em): Response
     {
-        if ($commande->getEtat() !== 'En attente') {
-            $this->addFlash('error', 'Seules les commandes en attente peuvent être validées.');
+        if ($commande->getEtat() !== 'En cours') {
+            $this->addFlash('error', 'Seules les commandes en cours peuvent être validées.');
             return $this->redirectToRoute('commandes_index');
         }
 
-        $commande->setEtat('Validée');
+        $commande->setEtat('Validee');
         $em->flush();
 
         $this->addFlash('success', 'Commande validée avec succès.');
@@ -139,12 +156,12 @@ class CommandeController extends AbstractController
     #[Route('/{id}/annuler', name: 'commandes_annuler', methods: ['POST'])]
     public function annuler(Commande $commande, EntityManagerInterface $em): Response
     {
-        if (in_array($commande->getEtat(), ['Terminée', 'Annulée'])) {
+        if (in_array($commande->getEtat(), ['Terminee', 'Annulee'])) {
             $this->addFlash('error', 'Cette commande ne peut pas être annulée.');
             return $this->redirectToRoute('commandes_index');
         }
 
-        $commande->setEtat('Annulée');
+        $commande->setEtat('Annulee');
         $em->flush();
 
         $this->addFlash('success', 'Commande annulée avec succès.');

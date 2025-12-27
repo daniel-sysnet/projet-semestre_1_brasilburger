@@ -83,10 +83,10 @@
                         <label for="etat">État :</label><br>
                         <select name="etat" id="etat">
                             <option value="">Tous</option>
-                            <option value="En attente" {{ filters.etat == 'En attente' ? 'selected' : '' }}>En attente</option>
-                            <option value="Validée" {{ filters.etat == 'Validée' ? 'selected' : '' }}>Validée</option>
-                            <option value="Terminée" {{ filters.etat == 'Terminée' ? 'selected' : '' }}>Terminée</option>
-                            <option value="Annulée" {{ filters.etat == 'Annulée' ? 'selected' : '' }}>Annulée</option>
+                            <option value="En cours" {{ filters.etat == 'En cours' ? 'selected' : '' }}>En attente</option>
+                            <option value="Validee" {{ filters.etat == 'Validee' ? 'selected' : '' }}>Validée</option>
+                            <option value="Terminee" {{ filters.etat == 'Terminee' ? 'selected' : '' }}>Terminée</option>
+                            <option value="Annulee" {{ filters.etat == 'Annulee' ? 'selected' : '' }}>Annulée</option>
                         </select>
                     </div>
                     <div>
@@ -137,12 +137,12 @@
                             <td>{{ commande.livreur ? commande.livreur.nom ~ ' ' ~ commande.livreur.prenom : '-' }}</td>
                             <td>
                                 <a href="{{ path('commandes_show', {id: commande.id}) }}" class="btn btn-primary">Voir</a>
-                                {% if commande.etat == 'En attente' %}
+                                {% if commande.etat == 'En cours' %}
                                     <form method="post" action="{{ path('commandes_valider', {id: commande.id}) }}" style="display: inline;">
                                         <button type="submit" class="btn btn-success">Valider</button>
                                     </form>
                                 {% endif %}
-                                {% if commande.etat == 'Validée' and not commande.paiement %}
+                                {% if commande.etat == 'Validee' and not commande.paiement %}
                                     <form method="post" action="{{ path('commandes_payer', {id: commande.id}) }}" style="display: inline;">
                                         <select name="methode" required style="margin-right: 5px;">
                                             <option value="">Méthode</option>
@@ -152,7 +152,7 @@
                                         <button type="submit" class="btn btn-primary">Payer</button>
                                     </form>
                                 {% endif %}
-                                {% if commande.etat in ['En attente', 'Validée'] %}
+                                {% if commande.etat in ['En cours', 'Validee'] %}
                                     <form method="post" action="{{ path('commandes_annuler', {id: commande.id}) }}" style="display: inline;">
                                         <button type="submit" class="btn btn-danger">Annuler</button>
                                     </form>
