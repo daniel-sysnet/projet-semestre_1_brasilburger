@@ -26,7 +26,9 @@
             <a href="{{ path('zone_index') }}">🏙️ Zones</a>
             <a href="{{ path('client_index') }}">👥 Clients</a>
             <a href="{{ path('commandes_livraisons') }}">🚚 Livraisons</a>
-            <a href="{{ path('logout') }}" class="logout">🚪 Déconnexion</a>
+            <form method="post" action="{{ path('logout') }}" style="display: inline;">
+                <button type="submit" class="logout" style="background: none; border: none; color: inherit; cursor: pointer;">🚪 Déconnexion</button>
+            </form>
         </nav>
     </aside>
 
