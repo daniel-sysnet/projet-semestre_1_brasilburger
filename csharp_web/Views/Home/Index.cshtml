@@ -70,7 +70,7 @@
                     @foreach (var burger in burgers ?? new List<csharp_web.Models.Burger>())
                     {
                         <div class="product-card">
-                            <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=400" alt="@burger.Nom" class="product-image">
+                            <img src="@burger.Image" alt="@burger.Nom" class="product-image">
                             <div class="product-info">
                                 <h3 class="product-name">@burger.Nom</h3>
                                 <p class="product-description">@burger.Description</p>
@@ -88,7 +88,7 @@
                     @foreach (var complement in complements ?? new List<csharp_web.Models.Complement>())
                     {
                         <div class="product-card">
-                            <img src="https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=400" alt="@complement.Nom" class="product-image">
+                            <img src="@complement.Image" alt="@complement.Nom" class="product-image">
                             <div class="product-info">
                                 <h3 class="product-name">@complement.Nom</h3>
                                 <p class="product-description">@complement.Description</p>
@@ -106,7 +106,7 @@
                     @foreach (var menu in menus ?? new List<csharp_web.Models.Menu>())
                     {
                         <div class="product-card">
-                            <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=400" alt="@menu.Nom" class="product-image">
+                            <img src="@menu.Image" alt="@menu.Nom" class="product-image">
                             <div class="product-info">
                                 <h3 class="product-name">@menu.Nom</h3>
                                 <p class="product-description">@menu.Description</p>
