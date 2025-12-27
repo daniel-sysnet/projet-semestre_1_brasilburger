@@ -1,7 +1,6 @@
-# Image PHP stable recommandée pour Symfony
 FROM php:8.2-apache
 
-# Installation des dépendances système
+# Dépendances système
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     libzip-dev \
@@ -11,43 +10,41 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Activer mod_rewrite pour Symfony
+# Apache
 RUN a2enmod rewrite
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-# Installer Composer
+# Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Définir le répertoire de travail
 WORKDIR /var/www/html
 
-# Copier le code source
+# Code source
 COPY . .
 
-# Installer les dépendances PHP (prod uniquement)
+# Installer dépendances Symfony
 RUN composer install --no-dev --optimize-autoloader
 
-# Créer les dossiers nécessaires et corriger les permissions
+# Permissions Symfony
 RUN mkdir -p var/cache var/log \
     && chown -R www-data:www-data var \
     && chmod -R 775 var
 
-# Configuration Apache pour Symfony
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
-RUN printf "<VirtualHost *:80>\n\
+# VirtualHost Symfony
+RUN printf "<VirtualHost *:%s>\n\
     DocumentRoot /var/www/html/public\n\
     <Directory /var/www/html/public>\n\
         AllowOverride All\n\
         Require all granted\n\
     </Directory>\n\
-</VirtualHost>\n" > /etc/apache2/sites-available/000-default.conf
+</VirtualHost>\n" "${PORT}" > /etc/apache2/sites-available/000-default.conf
 
-# Variables d'environnement
+# Adapter Apache au port Render
+RUN sed -i 's/Listen 80/Listen ${PORT}/g' /etc/apache2/ports.conf
+
 ENV APP_ENV=prod
 ENV APP_DEBUG=0
 
-# Exposer le port
-EXPOSE 80
+EXPOSE ${PORT}
 
-# Lancer Apache
 CMD ["apache2-foreground"]
