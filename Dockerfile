@@ -1,5 +1,5 @@
 # Dockerfile pour Symfony sur Render
-FROM php:8.2-apache
+FROM php:8.4-apache
 
 # Installer les extensions PHP nécessaires
 RUN apt-get update && apt-get install -y \
