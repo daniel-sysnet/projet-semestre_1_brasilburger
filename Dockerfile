@@ -39,5 +39,9 @@ EOF
 # Exposer le port 80
 EXPOSE 80
 
+# Variables d'environnement pour production
+ENV APP_ENV=prod
+ENV APP_DEBUG=false
+
 # Commande de démarrage
 CMD ["apache2-foreground"]
