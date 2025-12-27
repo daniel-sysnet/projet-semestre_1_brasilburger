@@ -1,42 +1,50 @@
+# Dockerfile pour Symfony sur Render
 FROM php:8.4-apache
 
-# Dépendances système
+# Installer les extensions PHP nécessaires
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     libzip-dev \
     unzip \
-    git \
-    && docker-php-ext-install pdo pdo_pgsql zip \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && docker-php-ext-install pdo pdo_pgsql zip
 
-# Apache
-RUN a2enmod rewrite
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+# Installer Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Config Apache Symfony
-RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
+# Copier le code
+COPY . /var/www/html
 
-# Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
+# Définir le répertoire de travail
 WORKDIR /var/www/html
 
-# Code source
-COPY . .
+# Installer les dépendances
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Installer dépendances Symfony
-RUN composer install --no-dev --optimize-autoloader
+# Créer le répertoire var et permissions
+RUN mkdir -p var && chown -R www-data:www-data var
 
-# Permissions Symfony
-RUN mkdir -p var/cache var/log \
-    && chown -R www-data:www-data var \
-    && chmod -R 775 var
+# Rendre le script de démarrage exécutable
+RUN chmod +x start.sh
 
-# Variables d’environnement
-ENV APP_ENV=prod
-ENV APP_DEBUG=0
+# Configurer Apache pour Symfony
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+RUN a2enmod rewrite
+COPY <<EOF /etc/apache2/sites-available/000-default.conf
+<VirtualHost *:80>
+    DocumentRoot /var/www/html/public
+    <Directory /var/www/html/public>
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+EOF
 
+# Exposer le port 80
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+# Variables d'environnement pour production
+ENV APP_ENV=prod
+ENV APP_DEBUG=false
+
+# Commande de démarrage
+CMD ["./start.sh"]
