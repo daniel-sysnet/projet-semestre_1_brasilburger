@@ -18,7 +18,11 @@ COPY . /var/www/html
 WORKDIR /var/www/html
 
 # Installer les dépendances
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --no-scripts
+
+# Nettoyer et préchauffer le cache
+RUN php bin/console cache:clear --env=prod --no-debug || true
+RUN php bin/console cache:warmup --env=prod || true
 
 # Permissions
 RUN chown -R www-data:www-data /var/www/html/var
