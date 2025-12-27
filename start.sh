@@ -6,5 +6,11 @@
 # Exécuter les migrations
 php bin/console doctrine:migrations:migrate --no-interaction
 
+# Nettoyer le cache
+php bin/console cache:clear --env=prod
+
+# Préchauffer le cache
+php bin/console cache:warmup --env=prod
+
 # Démarrer Apache
 apache2-foreground
