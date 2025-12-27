@@ -20,12 +20,8 @@ WORKDIR /var/www/html
 # Installer les dépendances
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Nettoyer et préchauffer le cache
-RUN php bin/console cache:clear --env=prod --no-debug || true
-RUN php bin/console cache:warmup --env=prod || true
-
-# Permissions
-RUN chown -R www-data:www-data /var/www/html/var
+# Créer le répertoire var et permissions
+RUN mkdir -p var && chown -R www-data:www-data var
 
 # Configurer Apache pour Symfony
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
