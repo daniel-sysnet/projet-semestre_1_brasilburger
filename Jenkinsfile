@@ -5,6 +5,7 @@ pipeline {
         UBUNTU_USER = 'devops'
         APP_NAME    = 'csharp-web'
         DOCKER_TAG  = "${env.BUILD_NUMBER}"
+        SSH_KEY     = 'C:\\Users\\Administrator\\.ssh\\id_ed25519'
     }
     stages {
 
@@ -26,45 +27,19 @@ pipeline {
         stage('Transfert vers Ubuntu') {
             steps {
                 echo '=== Envoi du code vers Ubuntu ==='
-                withCredentials([sshUserPrivateKey(
-                    credentialsId: 'ubuntu-ssh',
-                    keyFileVariable: 'SSH_KEY',
-                    usernameVariable: 'SSH_USER'
-                )]) {
-                    script {
-                        def remote = [
-                            name        : 'ubuntu-devops',
-                            host        : env.UBUNTU_IP,
-                            user        : env.UBUNTU_USER,
-                            identityFile: env.SSH_KEY,
-                            allowAnyHosts: true
-                        ]
-                        sshCommand remote: remote, command: "mkdir -p /home/devops/app"
-                        sshPut remote: remote, from: '.', into: '/home/devops/app'
-                    }
-                }
+                bat """
+                    ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% "mkdir -p /home/devops/app"
+                    scp -i %SSH_KEY% -o StrictHostKeyChecking=no -r . %UBUNTU_USER%@%UBUNTU_IP%:/home/devops/app/
+                """
             }
         }
 
         stage('Docker Build') {
             steps {
                 echo '=== Construction image Docker sur Ubuntu ==='
-                withCredentials([sshUserPrivateKey(
-                    credentialsId: 'ubuntu-ssh',
-                    keyFileVariable: 'SSH_KEY',
-                    usernameVariable: 'SSH_USER'
-                )]) {
-                    script {
-                        def remote = [
-                            name        : 'ubuntu-devops',
-                            host        : env.UBUNTU_IP,
-                            user        : env.UBUNTU_USER,
-                            identityFile: env.SSH_KEY,
-                            allowAnyHosts: true
-                        ]
-                        sshCommand remote: remote, command: "cd /home/devops/app && docker build -t ${env.APP_NAME}:${env.DOCKER_TAG} . && docker tag ${env.APP_NAME}:${env.DOCKER_TAG} ${env.APP_NAME}:latest"
-                    }
-                }
+                bat """
+                    ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% "cd /home/devops/app && docker build -t %APP_NAME%:%DOCKER_TAG% . && docker tag %APP_NAME%:%DOCKER_TAG% %APP_NAME%:latest"
+                """
             }
         }
 
@@ -72,22 +47,9 @@ pipeline {
             when { branch 'csharp' }
             steps {
                 echo '=== Déploiement sur Kubernetes ==='
-                withCredentials([sshUserPrivateKey(
-                    credentialsId: 'ubuntu-ssh',
-                    keyFileVariable: 'SSH_KEY',
-                    usernameVariable: 'SSH_USER'
-                )]) {
-                    script {
-                        def remote = [
-                            name        : 'ubuntu-devops',
-                            host        : env.UBUNTU_IP,
-                            user        : env.UBUNTU_USER,
-                            identityFile: env.SSH_KEY,
-                            allowAnyHosts: true
-                        ]
-                        sshCommand remote: remote, command: "kubectl apply -f /home/devops/app/kubernetes/ && kubectl set image deployment/csharp-web csharp-web=${env.APP_NAME}:${env.DOCKER_TAG} && kubectl rollout status deployment/csharp-web"
-                    }
-                }
+                bat """
+                    ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% "kubectl apply -f /home/devops/app/kubernetes/ && kubectl set image deployment/csharp-web csharp-web=%APP_NAME%:%DOCKER_TAG% && kubectl rollout status deployment/csharp-web"
+                """
             }
         }
     }
