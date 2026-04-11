@@ -5,7 +5,7 @@ pipeline {
         UBUNTU_USER = 'devops'
         APP_NAME    = 'csharp-web'
         DOCKER_TAG  = "${env.BUILD_NUMBER}"
-        SSH_KEY     = 'C:\\Users\\Administrator\\.ssh\\id_ed25519'
+        SSH_KEY     = 'C:\\Users\\Administrateur\\.ssh\\id_ed25519'
     }
     stages {
 
