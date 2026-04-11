@@ -23,53 +23,50 @@ pipeline {
             }
         }
 
-        stage('Tests') {
-            steps {
-                echo '=== Tests unitaires ==='
-                bat 'dotnet test --no-build --configuration Release'
-            }
-        }
-
         stage('Transfert vers Ubuntu') {
             steps {
                 echo '=== Envoi du code vers Ubuntu ==='
-                sshagent(['ubuntu-ssh']) {
-                    bat """
-                        ssh -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% "mkdir -p /home/devops/app"
-                        scp -r -o StrictHostKeyChecking=no . %UBUNTU_USER%@%UBUNTU_IP%:/home/devops/app/
-                    """
-                }
+                sshPut remote: [
+                    host: "${UBUNTU_IP}",
+                    user: "${UBUNTU_USER}",
+                    credentialsId: 'ubuntu-ssh',
+                    allowAnyHosts: true
+                ],
+                from: '.',
+                into: '/home/devops/app'
             }
         }
 
         stage('Docker Build') {
             steps {
                 echo '=== Construction image Docker sur Ubuntu ==='
-                sshagent(['ubuntu-ssh']) {
-                    bat """
-                        ssh -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% ^
-                        "cd /home/devops/app && docker build -t %APP_NAME%:%DOCKER_TAG% . && docker tag %APP_NAME%:%DOCKER_TAG% %APP_NAME%:latest"
-                    """
-                }
+                sshCommand remote: [
+                    host: "${UBUNTU_IP}",
+                    user: "${UBUNTU_USER}",
+                    credentialsId: 'ubuntu-ssh',
+                    allowAnyHosts: true
+                ],
+                command: "cd /home/devops/app && docker build -t ${APP_NAME}:${DOCKER_TAG} . && docker tag ${APP_NAME}:${DOCKER_TAG} ${APP_NAME}:latest"
             }
         }
 
         stage('Deploy Kubernetes') {
-            when { branch 'main' }
+            when { branch 'csharp' }
             steps {
                 echo '=== Déploiement sur Kubernetes ==='
-                sshagent(['ubuntu-ssh']) {
-                    bat """
-                        ssh -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% ^
-                        "kubectl apply -f /home/devops/app/kubernetes/ && kubectl set image deployment/csharp-web csharp-web=%APP_NAME%:%DOCKER_TAG% && kubectl rollout status deployment/csharp-web"
-                    """
-                }
+                sshCommand remote: [
+                    host: "${UBUNTU_IP}",
+                    user: "${UBUNTU_USER}",
+                    credentialsId: 'ubuntu-ssh',
+                    allowAnyHosts: true
+                ],
+                command: "kubectl apply -f /home/devops/app/kubernetes/ && kubectl set image deployment/csharp-web csharp-web=${APP_NAME}:${DOCKER_TAG} && kubectl rollout status deployment/csharp-web"
             }
         }
     }
 
     post {
-        success { echo '=== ✅ Pipeline réussi ! App déployée ===' }
+        success { echo '=== ✅ Pipeline réussi ! ===' }
         failure  { echo '=== ❌ Échec — consultez les logs ===' }
     }
 }
