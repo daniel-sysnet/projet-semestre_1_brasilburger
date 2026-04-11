@@ -26,27 +26,32 @@ pipeline {
         stage('Transfert vers Ubuntu') {
             steps {
                 echo '=== Envoi du code vers Ubuntu ==='
-                sshPut remote: [
-                    host: "${UBUNTU_IP}",
-                    user: "${UBUNTU_USER}",
-                    credentialsId: 'ubuntu-ssh',
-                    allowAnyHosts: true
-                ],
-                from: '.',
-                into: '/home/devops/app'
+                script {
+                    def remote = [
+                        name: 'ubuntu-devops',
+                        host: "${UBUNTU_IP}",
+                        user: "${UBUNTU_USER}",
+                        credentialsId: 'ubuntu-ssh',
+                        allowAnyHosts: true
+                    ]
+                    sshPut remote: remote, from: '.', into: '/home/devops/app'
+                }
             }
         }
 
         stage('Docker Build') {
             steps {
                 echo '=== Construction image Docker sur Ubuntu ==='
-                sshCommand remote: [
-                    host: "${UBUNTU_IP}",
-                    user: "${UBUNTU_USER}",
-                    credentialsId: 'ubuntu-ssh',
-                    allowAnyHosts: true
-                ],
-                command: "cd /home/devops/app && docker build -t ${APP_NAME}:${DOCKER_TAG} . && docker tag ${APP_NAME}:${DOCKER_TAG} ${APP_NAME}:latest"
+                script {
+                    def remote = [
+                        name: 'ubuntu-devops',
+                        host: "${UBUNTU_IP}",
+                        user: "${UBUNTU_USER}",
+                        credentialsId: 'ubuntu-ssh',
+                        allowAnyHosts: true
+                    ]
+                    sshCommand remote: remote, command: "cd /home/devops/app && docker build -t ${APP_NAME}:${DOCKER_TAG} . && docker tag ${APP_NAME}:${DOCKER_TAG} ${APP_NAME}:latest"
+                }
             }
         }
 
@@ -54,13 +59,16 @@ pipeline {
             when { branch 'csharp' }
             steps {
                 echo '=== Déploiement sur Kubernetes ==='
-                sshCommand remote: [
-                    host: "${UBUNTU_IP}",
-                    user: "${UBUNTU_USER}",
-                    credentialsId: 'ubuntu-ssh',
-                    allowAnyHosts: true
-                ],
-                command: "kubectl apply -f /home/devops/app/kubernetes/ && kubectl set image deployment/csharp-web csharp-web=${APP_NAME}:${DOCKER_TAG} && kubectl rollout status deployment/csharp-web"
+                script {
+                    def remote = [
+                        name: 'ubuntu-devops',
+                        host: "${UBUNTU_IP}",
+                        user: "${UBUNTU_USER}",
+                        credentialsId: 'ubuntu-ssh',
+                        allowAnyHosts: true
+                    ]
+                    sshCommand remote: remote, command: "kubectl apply -f /home/devops/app/kubernetes/ && kubectl set image deployment/csharp-web csharp-web=${APP_NAME}:${DOCKER_TAG} && kubectl rollout status deployment/csharp-web"
+                }
             }
         }
     }
