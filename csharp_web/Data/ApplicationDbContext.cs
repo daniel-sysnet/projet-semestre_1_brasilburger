@@ -117,7 +117,10 @@ namespace csharp_web.Data
             modelBuilder.Entity<Client>().Property(c => c.Nom).HasColumnName("nom");
             modelBuilder.Entity<Client>().Property(c => c.Prenom).HasColumnName("prenom");
             modelBuilder.Entity<Client>().Property(c => c.Telephone).HasColumnName("telephone");
+<<<<<<< HEAD
             modelBuilder.Entity<Client>().HasIndex(c => c.Telephone).IsUnique();
+=======
+>>>>>>> 75ff3cf8d66dd0cdd3e2ce0f872ae25463cc570c
 
             modelBuilder.Entity<Zone>().ToTable("zone");
             modelBuilder.Entity<Zone>().Property(z => z.Id).HasColumnName("id").ValueGeneratedOnAdd();

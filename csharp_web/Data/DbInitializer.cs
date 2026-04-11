@@ -7,6 +7,7 @@ namespace csharp_web.Data
     {
         public static void Initialize(ApplicationDbContext context)
         {
+<<<<<<< HEAD
             // Nettoyer les doublons de téléphone dans la table client
             try
             {
@@ -32,6 +33,8 @@ namespace csharp_web.Data
                 Console.WriteLine("Erreur lors du nettoyage des doublons : " + ex.Message);
             }
 
+=======
+>>>>>>> 75ff3cf8d66dd0cdd3e2ce0f872ae25463cc570c
             // Vérifier si la base est déjà peuplée
             if (context.Burgers.Any())
             {

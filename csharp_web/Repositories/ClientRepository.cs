@@ -20,12 +20,15 @@ namespace csharp_web.Repositories
                 .FirstOrDefaultAsync(c => c.Nom == nom && c.Telephone == telephone);
         }
 
+<<<<<<< HEAD
         public async Task<Client?> GetByTelephoneAsync(string telephone)
         {
             return await _context.Clients
                 .FirstOrDefaultAsync(c => c.Telephone == telephone);
         }
 
+=======
+>>>>>>> 75ff3cf8d66dd0cdd3e2ce0f872ae25463cc570c
         public async Task AddAsync(Client client)
         {
             _context.Clients.Add(client);

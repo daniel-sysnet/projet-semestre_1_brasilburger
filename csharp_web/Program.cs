@@ -61,6 +61,7 @@ builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
+<<<<<<< HEAD
 // ===== INITIALISATION DE LA BASE DE DONNÉES =====
 try
 {
@@ -74,6 +75,9 @@ catch (Exception ex)
 {
     Console.WriteLine("Erreur lors de l'initialisation de la base : " + ex.Message);
 }
+=======
+// ===== MIGRATIONS AUTOMATIQUES =====
+>>>>>>> 75ff3cf8d66dd0cdd3e2ce0f872ae25463cc570c
 // try
 // {
 //     using (var scope = app.Services.CreateScope())
