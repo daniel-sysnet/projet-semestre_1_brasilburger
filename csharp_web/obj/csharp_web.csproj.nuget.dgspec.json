@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\PC\\OneDrive\\Documents\\csharp_web\\csharp_web\\csharp_web.csproj": {}
+    "C:\\Users\\MADD\\Documents\\Etudes_Projets\\Code_&_Developement\\C_sharp\\csharp_web\\csharp_web\\csharp_web.csproj": {}
   },
   "projects": {
-    "C:\\Users\\PC\\OneDrive\\Documents\\csharp_web\\csharp_web\\csharp_web.csproj": {
+    "C:\\Users\\MADD\\Documents\\Etudes_Projets\\Code_&_Developement\\C_sharp\\csharp_web\\csharp_web\\csharp_web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\PC\\OneDrive\\Documents\\csharp_web\\csharp_web\\csharp_web.csproj",
+        "projectUniqueName": "C:\\Users\\MADD\\Documents\\Etudes_Projets\\Code_&_Developement\\C_sharp\\csharp_web\\csharp_web\\csharp_web.csproj",
         "projectName": "csharp_web",
-        "projectPath": "C:\\Users\\PC\\OneDrive\\Documents\\csharp_web\\csharp_web\\csharp_web.csproj",
-        "packagesPath": "C:\\Users\\PC\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\PC\\OneDrive\\Documents\\csharp_web\\csharp_web\\obj\\",
+        "projectPath": "C:\\Users\\MADD\\Documents\\Etudes_Projets\\Code_&_Developement\\C_sharp\\csharp_web\\csharp_web\\csharp_web.csproj",
+        "packagesPath": "C:\\Users\\MADD\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\MADD\\Documents\\Etudes_Projets\\Code_&_Developement\\C_sharp\\csharp_web\\csharp_web\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\MADD\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -38,7 +38,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "10.0.100"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0": {
@@ -52,7 +52,7 @@
             },
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
-              "version": "[9.0.0, )"
+              "version": "[8.0.4, )"
             }
           },
           "imports": [
@@ -66,6 +66,24 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.23, 8.0.23]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[8.0.23, 8.0.23]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.23, 8.0.23]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[8.0.23, 8.0.23]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -74,7 +92,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.310/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
