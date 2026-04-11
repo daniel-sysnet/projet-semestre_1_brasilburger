@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        UBUNTU_IP   = '192.168.2.22'   // ← remplace par l'IP réelle de ton Ubuntu
+        UBUNTU_IP   = '192.168.2.22'   
         UBUNTU_USER = 'devops'
         APP_NAME    = 'csharp-web'
         DOCKER_TAG  = "${env.BUILD_NUMBER}"
