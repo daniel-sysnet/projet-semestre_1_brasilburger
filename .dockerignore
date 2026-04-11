@@ -11,3 +11,7 @@
 
 # Divers
 node_modules
+
+Jenkinsfile
+kubernetes/
+README.md
