@@ -19,7 +19,6 @@ namespace csharp_web.Services
 
         public async Task RegisterAsync(string nom, string prenom, string telephone)
         {
-<<<<<<< HEAD
             // Vérifier si le téléphone existe déjà
             var existingClient = await _clientRepository.GetByTelephoneAsync(telephone);
             if (existingClient != null)
@@ -27,8 +26,6 @@ namespace csharp_web.Services
                 throw new InvalidOperationException($"Un client avec le numéro {telephone} existe déjà.");
             }
 
-=======
->>>>>>> 75ff3cf8d66dd0cdd3e2ce0f872ae25463cc570c
             var client = new Client
             {
                 Nom = nom,
