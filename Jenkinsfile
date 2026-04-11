@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        UBUNTU_IP   = '192.168.2.22'   
+        UBUNTU_IP   = '192.168.2.22'
         UBUNTU_USER = 'devops'
         APP_NAME    = 'csharp-web'
         DOCKER_TAG  = "${env.BUILD_NUMBER}"
@@ -26,15 +26,22 @@ pipeline {
         stage('Transfert vers Ubuntu') {
             steps {
                 echo '=== Envoi du code vers Ubuntu ==='
-                script {
-                    def remote = [
-                        name: 'ubuntu-devops',
-                        host: "${UBUNTU_IP}",
-                        user: "${UBUNTU_USER}",
-                        credentialsId: 'ubuntu-ssh',
-                        allowAnyHosts: true
-                    ]
-                    sshPut remote: remote, from: '.', into: '/home/devops/app'
+                withCredentials([sshUserPrivateKey(
+                    credentialsId: 'ubuntu-ssh',
+                    keyFileVariable: 'SSH_KEY',
+                    usernameVariable: 'SSH_USER'
+                )]) {
+                    script {
+                        def remote = [
+                            name        : 'ubuntu-devops',
+                            host        : env.UBUNTU_IP,
+                            user        : env.UBUNTU_USER,
+                            identityFile: env.SSH_KEY,
+                            allowAnyHosts: true
+                        ]
+                        sshCommand remote: remote, command: "mkdir -p /home/devops/app"
+                        sshPut remote: remote, from: '.', into: '/home/devops/app'
+                    }
                 }
             }
         }
@@ -42,15 +49,21 @@ pipeline {
         stage('Docker Build') {
             steps {
                 echo '=== Construction image Docker sur Ubuntu ==='
-                script {
-                    def remote = [
-                        name: 'ubuntu-devops',
-                        host: "${UBUNTU_IP}",
-                        user: "${UBUNTU_USER}",
-                        credentialsId: 'ubuntu-ssh',
-                        allowAnyHosts: true
-                    ]
-                    sshCommand remote: remote, command: "cd /home/devops/app && docker build -t ${APP_NAME}:${DOCKER_TAG} . && docker tag ${APP_NAME}:${DOCKER_TAG} ${APP_NAME}:latest"
+                withCredentials([sshUserPrivateKey(
+                    credentialsId: 'ubuntu-ssh',
+                    keyFileVariable: 'SSH_KEY',
+                    usernameVariable: 'SSH_USER'
+                )]) {
+                    script {
+                        def remote = [
+                            name        : 'ubuntu-devops',
+                            host        : env.UBUNTU_IP,
+                            user        : env.UBUNTU_USER,
+                            identityFile: env.SSH_KEY,
+                            allowAnyHosts: true
+                        ]
+                        sshCommand remote: remote, command: "cd /home/devops/app && docker build -t ${env.APP_NAME}:${env.DOCKER_TAG} . && docker tag ${env.APP_NAME}:${env.DOCKER_TAG} ${env.APP_NAME}:latest"
+                    }
                 }
             }
         }
@@ -59,15 +72,21 @@ pipeline {
             when { branch 'csharp' }
             steps {
                 echo '=== Déploiement sur Kubernetes ==='
-                script {
-                    def remote = [
-                        name: 'ubuntu-devops',
-                        host: "${UBUNTU_IP}",
-                        user: "${UBUNTU_USER}",
-                        credentialsId: 'ubuntu-ssh',
-                        allowAnyHosts: true
-                    ]
-                    sshCommand remote: remote, command: "kubectl apply -f /home/devops/app/kubernetes/ && kubectl set image deployment/csharp-web csharp-web=${APP_NAME}:${DOCKER_TAG} && kubectl rollout status deployment/csharp-web"
+                withCredentials([sshUserPrivateKey(
+                    credentialsId: 'ubuntu-ssh',
+                    keyFileVariable: 'SSH_KEY',
+                    usernameVariable: 'SSH_USER'
+                )]) {
+                    script {
+                        def remote = [
+                            name        : 'ubuntu-devops',
+                            host        : env.UBUNTU_IP,
+                            user        : env.UBUNTU_USER,
+                            identityFile: env.SSH_KEY,
+                            allowAnyHosts: true
+                        ]
+                        sshCommand remote: remote, command: "kubectl apply -f /home/devops/app/kubernetes/ && kubectl set image deployment/csharp-web csharp-web=${env.APP_NAME}:${env.DOCKER_TAG} && kubectl rollout status deployment/csharp-web"
+                    }
                 }
             }
         }
