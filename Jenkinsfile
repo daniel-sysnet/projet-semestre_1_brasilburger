@@ -44,7 +44,7 @@ pipeline {
         }
 
         stage('Deploy Kubernetes') {
-            when { branch 'csharp' }
+            when { expression { return true } }
             steps {
                 echo '=== Déploiement sur Kubernetes ==='
                 bat """
