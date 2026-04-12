@@ -1,8 +1,10 @@
+using Prometheus;
 using csharp_web.Data;
 using csharp_web.Repositories;
 using csharp_web.Services;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +56,7 @@ builder.Services.AddScoped<ILivreurService, LivreurService>();
 builder.Services.AddScoped<IPanierService, PanierService>();
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<IMetricServer>(new MetricServer(port: 9091));
 
 var app = builder.Build();
 
@@ -132,6 +135,9 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
+// ===== PROMETHEUS METRICS =====
+app.UseMetricServer();
+app.UseHttpMetrics();
 
 app.MapControllerRoute(
     name: "default",
