@@ -202,4 +202,5 @@ La BDD est créée via Entity Framework Core (migrations). Voici le schéma des 
 - **Déploiement** : Préparez pour Docker/Render comme la partie C#.
 
 Si vous avez des questions ou besoin d'ajustements, demandez ! Copiez ce texte dans Copilot pour commencer.#   t e s t   w e b h o o k  
+ t e s t   p o l l i n g  
  
