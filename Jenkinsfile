@@ -41,7 +41,7 @@ pipeline {
             when { expression { return true } }
             steps {
                 echo '=== Déploiement sur Kubernetes ==='
-                bat "ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% \"export KUBECONFIG=/home/devops/.kube/config && kubectl apply -f /home/devops/app/kubernetes/ && kubectl set image deployment/csharp-web csharp-web=%APP_NAME%:%DOCKER_TAG% && kubectl rollout status deployment/csharp-web\""
+                bat "ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% \"export KUBECONFIG=/home/devops/.kube/config && kubectl apply -f /home/devops/app/kubernetes/ && kubectl set image deployment/csharp-web csharp-web=docker.io/library/%APP_NAME%:latest && kubectl rollout status deployment/csharp-web\""
             }
         }
     }

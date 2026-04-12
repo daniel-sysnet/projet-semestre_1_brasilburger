@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: csharp-web
-        image: csharp-web:latest
+        image: docker.io/library/csharp-web:latest
         imagePullPolicy: Never
         ports:
         - containerPort: 8080
