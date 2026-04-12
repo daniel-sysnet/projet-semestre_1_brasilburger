@@ -63,13 +63,13 @@ try
     using (var scope = app.Services.CreateScope())
     {
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        context.Database.Migrate();
-        Console.WriteLine("✅ Migrations appliquées avec succès.");
+        context.Database.EnsureCreated();
+        Console.WriteLine("✅ Base de données créée avec succès.");
     }
 }
 catch (Exception ex)
 {
-    Console.WriteLine("Erreur lors des migrations : " + ex.Message);
+    Console.WriteLine("Erreur lors de la création de la base : " + ex.Message);
 }
 
 // ===== INITIALISATION DES DONNÉES =====
