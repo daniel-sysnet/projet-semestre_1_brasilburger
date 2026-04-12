@@ -29,7 +29,10 @@ pipeline {
                 echo '=== Envoi du code vers Ubuntu ==='
                 bat """
                     ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% "rm -rf /home/devops/app && mkdir -p /home/devops/app"
-                    scp -i %SSH_KEY% -o StrictHostKeyChecking=no -r --exclude='.git' . %UBUNTU_USER%@%UBUNTU_IP%:/home/devops/app/
+                    tar --exclude='.git' --exclude='obj' --exclude='bin' -czf app.tar.gz .
+                    scp -i %SSH_KEY% -o StrictHostKeyChecking=no app.tar.gz %UBUNTU_USER%@%UBUNTU_IP%:/home/devops/app/
+                    ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% "cd /home/devops/app && tar -xzf app.tar.gz && rm app.tar.gz"
+                    del app.tar.gz
                 """
             }
         }
