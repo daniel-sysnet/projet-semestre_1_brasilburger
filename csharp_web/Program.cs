@@ -9,14 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 // ===== MVC =====
 builder.Services.AddControllersWithViews();
 
-// ===== CONNECTION STRING (PostgreSQL Render / Neon) =====
-// 1. Récupérer depuis variable d'environnement (Render)
+// ===== CONNECTION STRING =====
 var connectionStringEnv = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
-
-// 2. Si variable absente, fallback sur appsettings.json
 var connectionString = connectionStringEnv ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-// 3. Transforme l'ancienne DATABASE_URL (Postgres URL) en format Npgsql si besoin
 if (!string.IsNullOrEmpty(connectionString) && connectionString.StartsWith("postgres://"))
 {
     var uri = new Uri(connectionString);
@@ -61,49 +57,35 @@ builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
-// ===== INITIALISATION DE LA BASE DE DONNÉES =====
+// ===== MIGRATIONS AUTOMATIQUES =====
+try
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        context.Database.Migrate();
+        Console.WriteLine("✅ Migrations appliquées avec succès.");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine("Erreur lors des migrations : " + ex.Message);
+}
+
+// ===== INITIALISATION DES DONNÉES =====
 try
 {
     using (var scope = app.Services.CreateScope())
     {
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         DbInitializer.Initialize(context);
+        Console.WriteLine("✅ Base de données initialisée.");
     }
 }
 catch (Exception ex)
 {
     Console.WriteLine("Erreur lors de l'initialisation de la base : " + ex.Message);
 }
-
-// ===== MIGRATIONS AUTOMATIQUES =====
-// try
-// {
-//     using (var scope = app.Services.CreateScope())
-//     {
-//         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-//         context.Database.Migrate();
-//     }
-// }
-// catch (Exception ex)
-// {
-//     // Journaliser l'erreur mais ne pas crasher
-//     Console.WriteLine("Erreur lors de la migration automatique : " + ex.Message);
-// }
-
-// ===== PIPELINE HTTP =====
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-}
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseSession();
-app.UseAuthorization();
 
 // ===== RESET SEQUENCES =====
 try
@@ -122,7 +104,6 @@ try
         await context.Database.ExecuteSqlRawAsync("SELECT setval('commande_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM commande));");
         await context.Database.ExecuteSqlRawAsync("SELECT setval('ligne_commande_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM ligne_commande));");
 
-        // Ajouter la colonne paiement_id si elle n'existe pas
         await context.Database.ExecuteSqlRawAsync(@"
             DO $$
             BEGIN
@@ -131,12 +112,26 @@ try
                 END IF;
             END $$;
         ");
+        Console.WriteLine("✅ Séquences réinitialisées.");
     }
 }
 catch (Exception ex)
 {
-    Console.WriteLine("Erreur lors du reset des séquences ou ajout de colonne : " + ex.Message);
+    Console.WriteLine("Erreur lors du reset des séquences : " + ex.Message);
 }
+
+// ===== PIPELINE HTTP =====
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+app.UseSession();
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
