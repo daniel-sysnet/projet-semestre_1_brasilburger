@@ -34,7 +34,7 @@ pipeline {
         stage('Docker Build') {
             steps {
                 echo '=== Construction image Docker sur Ubuntu ==='
-                bat "ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% \"cd /home/devops/app && docker build -t %APP_NAME%:%DOCKER_TAG% . && docker tag %APP_NAME%:%DOCKER_TAG% %APP_NAME%:latest && docker save %APP_NAME%:latest -o /tmp/%APP_NAME%.tar && sudo k3s ctr images import /tmp/%APP_NAME%.tar && rm /tmp/%APP_NAME%.tar\""
+                bat "ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% \"cd /home/devops/app && docker build --no-cache -t %APP_NAME%:%DOCKER_TAG% . && docker tag %APP_NAME%:%DOCKER_TAG% %APP_NAME%:latest && docker save %APP_NAME%:latest -o /tmp/%APP_NAME%.tar && sudo k3s ctr images import /tmp/%APP_NAME%.tar && rm /tmp/%APP_NAME%.tar\""
             }
         }
         stage('Deploy Kubernetes') {
