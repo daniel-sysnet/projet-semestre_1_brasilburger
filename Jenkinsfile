@@ -5,17 +5,15 @@ pipeline {
         UBUNTU_USER = 'devops'
         APP_NAME    = 'csharp-web'
         DOCKER_TAG  = "${env.BUILD_NUMBER}"
-        SSH_KEY = 'C:\\Users\\svc-jenkins\\.ssh\\id_ed25519'
+        SSH_KEY     = 'C:\\Users\\svc-jenkins\\.ssh\\id_ed25519'
     }
     stages {
-
         stage('Checkout') {
             steps {
                 echo '=== Récupération du code GitHub ==='
                 checkout scm
             }
         }
-
         stage('Build C#') {
             steps {
                 echo '=== Compilation .NET ==='
@@ -23,40 +21,30 @@ pipeline {
                 bat 'dotnet build ./csharp_web/csharp_web.csproj --configuration Release --no-restore'
             }
         }
-
         stage('Transfert vers Ubuntu') {
             steps {
                 echo '=== Envoi du code vers Ubuntu ==='
-                bat """
-                    ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% "rm -rf /home/devops/app && mkdir -p /home/devops/app"
-                    tar --exclude='.git' --exclude='obj' --exclude='bin' -czf app.tar.gz .
-                    scp -i %SSH_KEY% -o StrictHostKeyChecking=no app.tar.gz %UBUNTU_USER%@%UBUNTU_IP%:/home/devops/app/
-                    ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% "cd /home/devops/app && tar -xzf app.tar.gz && rm app.tar.gz"
-                    del app.tar.gz
-                """
+                bat "ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% \"rm -rf /home/devops/app && mkdir -p /home/devops/app\""
+                bat "tar --exclude='.git' --exclude='obj' --exclude='bin' -czf app.tar.gz ."
+                bat "scp -i %SSH_KEY% -o StrictHostKeyChecking=no app.tar.gz %UBUNTU_USER%@%UBUNTU_IP%:/home/devops/app/"
+                bat "ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% \"cd /home/devops/app && tar -xzf app.tar.gz && rm app.tar.gz\""
+                bat "del app.tar.gz"
             }
         }
-
         stage('Docker Build') {
             steps {
                 echo '=== Construction image Docker sur Ubuntu ==='
-                bat """
-                    ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% "cd /home/devops/app && docker build -t %APP_NAME%:%DOCKER_TAG% . && docker tag %APP_NAME%:%DOCKER_TAG% %APP_NAME%:latest"
-                """
+                bat "ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% \"cd /home/devops/app && docker build -t %APP_NAME%:%DOCKER_TAG% . && docker tag %APP_NAME%:%DOCKER_TAG% %APP_NAME%:latest\""
             }
         }
-
         stage('Deploy Kubernetes') {
             when { expression { return true } }
             steps {
                 echo '=== Déploiement sur Kubernetes ==='
-                bat """
-                    ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% "kubectl apply -f /home/devops/app/kubernetes/ && kubectl set image deployment/csharp-web csharp-web=%APP_NAME%:%DOCKER_TAG% && kubectl rollout status deployment/csharp-web"
-                """
+                bat "ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% \"export KUBECONFIG=/home/devops/.kube/config && kubectl apply -f /home/devops/app/kubernetes/ && kubectl set image deployment/csharp-web csharp-web=%APP_NAME%:%DOCKER_TAG% && kubectl rollout status deployment/csharp-web\""
             }
         }
     }
-
     post {
         success { echo '=== ✅ Pipeline réussi ! ===' }
         failure  { echo '=== ❌ Échec — consultez les logs ===' }
