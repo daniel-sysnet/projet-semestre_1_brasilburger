@@ -28,8 +28,8 @@ pipeline {
             steps {
                 echo '=== Envoi du code vers Ubuntu ==='
                 bat """
-                    ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% "mkdir -p /home/devops/app"
-                    scp -i %SSH_KEY% -o StrictHostKeyChecking=no -r . %UBUNTU_USER%@%UBUNTU_IP%:/home/devops/app/
+                    ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% "rm -rf /home/devops/app && mkdir -p /home/devops/app"
+                    scp -i %SSH_KEY% -o StrictHostKeyChecking=no -r --exclude='.git' . %UBUNTU_USER%@%UBUNTU_IP%:/home/devops/app/
                 """
             }
         }
