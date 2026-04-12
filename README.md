@@ -201,4 +201,5 @@ La BDD est créée via Entity Framework Core (migrations). Voici le schéma des 
 - **Éviter les Erreurs** : Respectez les types/relations des modèles C#. Testez les requêtes Doctrine pour éviter les conflits de clés étrangères.
 - **Déploiement** : Préparez pour Docker/Render comme la partie C#.
 
-Si vous avez des questions ou besoin d'ajustements, demandez ! Copiez ce texte dans Copilot pour commencer.
+Si vous avez des questions ou besoin d'ajustements, demandez ! Copiez ce texte dans Copilot pour commencer.#   t e s t   w e b h o o k  
+ 
