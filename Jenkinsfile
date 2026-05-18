@@ -5,6 +5,7 @@ pipeline {
         UBUNTU_USER = 'linux-admin01'
         APP_NAME    = 'brasilburger'
         DOCKER_TAG  = "${env.BUILD_NUMBER}"
+        SSH_KEY     = 'C:\\Users\\admin1\\.ssh\\id_ed25519'
     }
     stages {
         stage('Checkout') {
@@ -23,30 +24,24 @@ pipeline {
         stage('Transfert vers Ubuntu') {
             steps {
                 echo '=== Envoi du code vers Ubuntu ==='
-                sshagent(['ubuntu-ssh']) {
-                    bat "ssh -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% \"rm -rf /home/linux-admin01/app && mkdir -p /home/linux-admin01/app\""
-                    bat "tar --exclude='.git' --exclude='obj' --exclude='bin' -czf app.tar.gz ."
-                    bat "scp -o StrictHostKeyChecking=no app.tar.gz %UBUNTU_USER%@%UBUNTU_IP%:/home/linux-admin01/app/"
-                    bat "ssh -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% \"cd /home/linux-admin01/app && tar -xzf app.tar.gz && rm app.tar.gz\""
-                    bat "del app.tar.gz"
-                }
+                bat "ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% \"rm -rf /home/linux-admin01/app && mkdir -p /home/linux-admin01/app\""
+                bat "tar --exclude='.git' --exclude='obj' --exclude='bin' -czf app.tar.gz ."
+                bat "scp -i %SSH_KEY% -o StrictHostKeyChecking=no app.tar.gz %UBUNTU_USER%@%UBUNTU_IP%:/home/linux-admin01/app/"
+                bat "ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% \"cd /home/linux-admin01/app && tar -xzf app.tar.gz && rm app.tar.gz\""
+                bat "del app.tar.gz"
             }
         }
         stage('Docker Build') {
             steps {
                 echo '=== Construction image Docker sur Ubuntu ==='
-                sshagent(['ubuntu-ssh']) {
-                    bat "ssh -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% \"cd /home/linux-admin01/app && docker build --no-cache -t %APP_NAME%:%DOCKER_TAG% . && docker tag %APP_NAME%:%DOCKER_TAG% %APP_NAME%:latest && docker save %APP_NAME%:latest -o /tmp/%APP_NAME%.tar && sudo k3s ctr images import /tmp/%APP_NAME%.tar && rm /tmp/%APP_NAME%.tar\""
-                }
+                bat "ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% \"cd /home/linux-admin01/app && docker build --no-cache -t %APP_NAME%:%DOCKER_TAG% . && docker tag %APP_NAME%:%DOCKER_TAG% %APP_NAME%:latest && docker save %APP_NAME%:latest -o /tmp/%APP_NAME%.tar && sudo k3s ctr images import /tmp/%APP_NAME%.tar && rm /tmp/%APP_NAME%.tar\""
             }
         }
         stage('Deploy Kubernetes') {
             when { expression { return true } }
             steps {
                 echo '=== Déploiement sur Kubernetes ==='
-                sshagent(['ubuntu-ssh']) {
-                    bat "ssh -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% \"export KUBECONFIG=/home/linux-admin01/.kube/config && kubectl apply -f /home/linux-admin01/app/kubernetes/ && kubectl set image deployment/brasilburger brasilburger=docker.io/library/%APP_NAME%:latest && kubectl rollout status deployment/brasilburger\""
-                }
+                bat "ssh -i %SSH_KEY% -o StrictHostKeyChecking=no %UBUNTU_USER%@%UBUNTU_IP% \"export KUBECONFIG=/home/linux-admin01/.kube/config && kubectl apply -f /home/linux-admin01/app/kubernetes/ && kubectl set image deployment/brasilburger brasilburger=docker.io/library/%APP_NAME%:latest && kubectl rollout status deployment/brasilburger\""
             }
         }
     }
