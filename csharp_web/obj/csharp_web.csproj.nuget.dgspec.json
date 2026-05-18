@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\MADD\\Documents\\Etudes_Projets\\Code_&_Developement\\C_sharp\\csharp_web\\csharp_web\\csharp_web.csproj": {}
+    "C:\\Users\\MADD\\Documents\\Etudes_Projets\\Code_Developement\\C_sharp\\csharp_web\\csharp_web\\csharp_web.csproj": {}
   },
   "projects": {
-    "C:\\Users\\MADD\\Documents\\Etudes_Projets\\Code_&_Developement\\C_sharp\\csharp_web\\csharp_web\\csharp_web.csproj": {
+    "C:\\Users\\MADD\\Documents\\Etudes_Projets\\Code_Developement\\C_sharp\\csharp_web\\csharp_web\\csharp_web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\MADD\\Documents\\Etudes_Projets\\Code_&_Developement\\C_sharp\\csharp_web\\csharp_web\\csharp_web.csproj",
+        "projectUniqueName": "C:\\Users\\MADD\\Documents\\Etudes_Projets\\Code_Developement\\C_sharp\\csharp_web\\csharp_web\\csharp_web.csproj",
         "projectName": "csharp_web",
-        "projectPath": "C:\\Users\\MADD\\Documents\\Etudes_Projets\\Code_&_Developement\\C_sharp\\csharp_web\\csharp_web\\csharp_web.csproj",
+        "projectPath": "C:\\Users\\MADD\\Documents\\Etudes_Projets\\Code_Developement\\C_sharp\\csharp_web\\csharp_web\\csharp_web.csproj",
         "packagesPath": "C:\\Users\\MADD\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\MADD\\Documents\\Etudes_Projets\\Code_&_Developement\\C_sharp\\csharp_web\\csharp_web\\obj\\",
+        "outputPath": "C:\\Users\\MADD\\Documents\\Etudes_Projets\\Code_Developement\\C_sharp\\csharp_web\\csharp_web\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\MADD\\AppData\\Roaming\\NuGet\\NuGet.Config"
